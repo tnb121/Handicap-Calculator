@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="2.0" toolsVersion="3084" systemVersion="12E55" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" initialViewController="2">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="2083"/>
+    </dependencies>
+    <scenes>
+        <!--Handicap View Controller-->
+        <scene sceneID="5">
+            <objects>
+                <viewController id="2" customClass="HandicapViewController" sceneMemberID="viewController">
+                    <view key="view" contentMode="scaleToFill" id="3">
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="FJq-hc-hhc">
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="97" id="4CK-HC-fLe"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                <connections>
+                                    <action selector="dismissRating:" destination="2" eventType="editingDidEndOnExit" id="8XS-ZF-LW2"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="fRp-wq-3bc">
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                <connections>
+                                    <action selector="dismissSlope:" destination="2" eventType="editingDidEndOnExit" id="8Kc-Sv-hy7"/>
+                                </connections>
+                            </textField>
+                            <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ie0-8o-cp7">
+                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
+                                <connections>
+                                    <action selector="dismissScore:" destination="2" eventType="editingDidEndOnExit" id="Omx-cI-BZr"/>
+                                </connections>
+                            </textField>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Rating" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="vz3-sa-pCJ">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Slope" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="GKI-ur-XHf">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Score" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="OBX-PM-4DQ">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="1Zc-82-jIe">
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="15"/>
+                                <state key="normal" title="Save Round">
+                                    <color key="titleColor" red="0.19607843459999999" green="0.30980393290000002" blue="0.52156865600000002" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <state key="highlighted">
+                                    <color key="titleColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                </state>
+                                <connections>
+                                    <action selector="CalculateDifferential:" destination="2" eventType="touchUpInside" id="Spc-4B-Tr4"/>
+                                </connections>
+                            </button>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Round Differential" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hyb-Zf-ycC">
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="FJq-hc-hhc" firstAttribute="top" secondItem="3" secondAttribute="top" constant="68" id="0Qt-oU-jdJ"/>
+                            <constraint firstAttribute="bottom" secondItem="Hyb-Zf-ycC" secondAttribute="bottom" constant="187" id="5N8-Wh-zjL"/>
+                            <constraint firstItem="fRp-wq-3bc" firstAttribute="leading" secondItem="FJq-hc-hhc" secondAttribute="leading" type="default" id="68c-XE-EFC"/>
+                            <constraint firstItem="1Zc-82-jIe" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="96" id="7Nh-Xd-KP0"/>
+                            <constraint firstItem="vz3-sa-pCJ" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="37" id="C5R-Eh-PaP"/>
+                            <constraint firstItem="vz3-sa-pCJ" firstAttribute="top" secondItem="FJq-hc-hhc" secondAttribute="top" type="default" id="E04-jp-mjM"/>
+                            <constraint firstItem="OBX-PM-4DQ" firstAttribute="leading" secondItem="GKI-ur-XHf" secondAttribute="leading" type="default" id="Gd9-Wz-O2q"/>
+                            <constraint firstItem="fRp-wq-3bc" firstAttribute="top" secondItem="FJq-hc-hhc" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="HC7-k2-0Iv"/>
+                            <constraint firstItem="1Zc-82-jIe" firstAttribute="top" secondItem="3" secondAttribute="top" constant="190" id="HXN-wJ-FbH"/>
+                            <constraint firstItem="Ie0-8o-cp7" firstAttribute="trailing" secondItem="fRp-wq-3bc" secondAttribute="trailing" type="default" id="Ha8-Vy-auR"/>
+                            <constraint firstItem="GKI-ur-XHf" firstAttribute="top" secondItem="fRp-wq-3bc" secondAttribute="top" type="default" id="LjI-a1-JfK"/>
+                            <constraint firstItem="Ie0-8o-cp7" firstAttribute="top" secondItem="fRp-wq-3bc" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="QpA-lC-vnG"/>
+                            <constraint firstItem="OBX-PM-4DQ" firstAttribute="top" secondItem="Ie0-8o-cp7" secondAttribute="top" type="default" id="Tra-vC-56s"/>
+                            <constraint firstItem="Hyb-Zf-ycC" firstAttribute="centerX" secondItem="3" secondAttribute="centerX" type="default" id="ViN-GP-Nly"/>
+                            <constraint firstItem="1Zc-82-jIe" firstAttribute="centerX" secondItem="Ie0-8o-cp7" secondAttribute="centerX" type="default" id="aGN-tB-c7Q"/>
+                            <constraint firstItem="fRp-wq-3bc" firstAttribute="trailing" secondItem="FJq-hc-hhc" secondAttribute="trailing" type="default" id="b8g-iH-4kY"/>
+                            <constraint firstItem="vz3-sa-pCJ" firstAttribute="leading" secondItem="GKI-ur-XHf" secondAttribute="leading" type="default" id="h4T-Fm-4uf"/>
+                            <constraint firstItem="Ie0-8o-cp7" firstAttribute="leading" secondItem="fRp-wq-3bc" secondAttribute="leading" type="default" id="jiz-8X-4Gr"/>
+                        </constraints>
+                    </view>
+                    <connections>
+                        <outlet property="differential" destination="Hyb-Zf-ycC" id="iVT-zF-8uU"/>
+                        <outlet property="ratingValue" destination="FJq-hc-hhc" id="Kbc-G2-2Zt"/>
+                        <outlet property="scoreValue" destination="Ie0-8o-cp7" id="EUj-Pi-IBV"/>
+                        <outlet property="slopeValue" destination="fRp-wq-3bc" id="JQu-8l-1gu"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="60" y="11"/>
+        </scene>
+    </scenes>
+    <classes>
+        <class className="HandicapViewController" superclassName="UIViewController">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/HandicapViewController.h"/>
+            <relationships>
+                <relationship kind="action" name="CalculateDifferential:" candidateClass="UIButton"/>
+                <relationship kind="action" name="dismissRating:"/>
+                <relationship kind="action" name="dismissScore:"/>
+                <relationship kind="action" name="dismissSlope:"/>
+                <relationship kind="outlet" name="differential" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="ratingValue" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="scoreValue" candidateClass="UITextField"/>
+                <relationship kind="outlet" name="slopeValue" candidateClass="UITextField"/>
+            </relationships>
+        </class>
+        <class className="NSLayoutConstraint" superclassName="NSObject">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+    </classes>
+    <simulatedMetricsContainer key="defaultSimulatedMetrics">
+        <simulatedStatusBarMetrics key="statusBar"/>
+        <simulatedOrientationMetrics key="orientation"/>
+        <simulatedScreenMetrics key="destination"/>
+    </simulatedMetricsContainer>
+</document>
