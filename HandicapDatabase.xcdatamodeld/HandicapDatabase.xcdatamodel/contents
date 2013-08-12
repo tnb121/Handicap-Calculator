@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12E55" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+    <entity name="Rounds" representedClassName="Rounds" syncable="YES">
+        <attribute name="roundCourseName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="roundDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="roundDifferential" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="roundRating" optional="YES" attributeType="Double" defaultValueString="72" syncable="YES"/>
+        <attribute name="roundScore" attributeType="Double" minValueString="50" maxValueString="999" syncable="YES"/>
+        <attribute name="roundSlope" attributeType="Double" minValueString="1" maxValueString="999" defaultValueString="113" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Rounds" positionX="160" positionY="192" width="128" height="135"/>
+    </elements>
+</model>

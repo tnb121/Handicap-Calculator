@@ -9,58 +9,123 @@
 #import "HandicapViewController.h"
 
 
-@interface HandicapViewController ()
 
+@interface HandicapViewController ()
+@property (nonatomic, strong) Differential *diff;
 @end
 
 @implementation HandicapViewController
 
+@synthesize mymessage;
+@synthesize diff = _diff;
+@synthesize delegate;
 
-- (IBAction)CalculateDifferential:(UIButton *)sender
+@synthesize ratingValue=_ratingValue;
+@synthesize slopeValue=_slopeValue;
+@synthesize scoreValue=_scoreValue;
+@synthesize differential;
+@synthesize dateValue=_dateValue;
+@synthesize courseNameValue=_courseNameValue;
+
+-(Differential*) diff
+
 {
-	// Save Course Rating
-	NSString *saveRating = ratingValue.text;
-	NSUserDefaults *defaultsRating = [NSUserDefaults standardUserDefaults];
-	[defaultsRating setObject:saveRating forKey:@"saveRating"];
-	[defaultsRating synchronize];
-
-	// Save Course Slope
-	NSString *saveSlope =slopeValue.text;
-	NSUserDefaults *defaultsSlope = [NSUserDefaults standardUserDefaults];
-	[defaultsSlope setObject:saveSlope forKey:@"saveSlope"];
-	[defaultsSlope synchronize];
-
-	// Save Round Score
-	NSString *saveScore = scoreValue.text;
-	NSUserDefaults *defaultsScore = [NSUserDefaults standardUserDefaults];
-	[defaultsScore setObject:saveScore forKey:@"saveScore"];
-	[defaultsScore synchronize];
-
-	//NSInteger myInt = [myString intValue];
-	NSInteger rating = [ratingValue.text integerValue];
-	NSInteger  slope = [slopeValue.text integerValue];
-	NSInteger score = [scoreValue.text integerValue];
-
-	[differential setText :[NSString stringWithFormat:@"Round Differential = %.1f",(score - rating)*113.0 / slope]];
+	if(!_diff) _diff = [[Differential alloc] init];
+	return _diff;
 }
 
--(IBAction)dismissRating:(id)sender
+
+-(double) RoundRatingFromTextInput
+{
+	NSInteger rating = [_ratingValue.text integerValue];
+	return rating;
+}
+
+-(double) RoundSlopeFromTextInput
+{
+	NSInteger slope = [_slopeValue.text integerValue];
+	return slope;
+}
+
+-(double) RoundScoreFromTextInput
+{
+	NSInteger score = [_scoreValue.text integerValue];
+	return score;
+}
+
+-(void)AddRound
+{
+
+	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
+	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
+	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
+	NSString * courseName = _courseNameValue.text;
+
+	
+
+
+	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+	[formatter setDateFormat:@"MM-dd-yyyy"];
+	NSDate *date = [formatter dateFromString:_dateValue.text];
+
+
+	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
+	NSManagedObjectContext* context = [appDelegate managedObjectContext];
+
+	NSEntityDescription *rounds = [NSEntityDescription entityForName:@"Rounds" inManagedObjectContext:context];
+	NSFetchRequest *request =[[NSFetchRequest alloc]init];
+	[request setEntity:rounds];
+
+	NSManagedObject *newRound;
+	newRound = [NSEntityDescription insertNewObjectForEntityForName:@"Rounds" inManagedObjectContext:context];
+	NSError *error;
+	[context save:&error];
+
+	[newRound setValue:rating forKey:@"roundRating"];
+	[newRound setValue:slope forKey:@"roundSlope"];
+	[newRound setValue:score forKey:@"roundScore"];
+	[newRound setValue:date	forKey:@"roundDate"];
+	[newRound setValue:courseName forKey:@"roundCourseName"];
+
+
+}
+
+
+- (IBAction)CalculateDifferentialAction:(id)sender
+{
+
+	[self AddRound];
+
+	mymessage =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]]];
+
+
+	// open an alert with just an OK button
+	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
+													message:mymessage
+												   delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+	[alert show];
+	
+}
+
+
+
+-(IBAction)dismissKeyboard:(id)sender
 {
 	[sender resignFirstResponder];
 }
 
--(IBAction)dismissSlope:(id)sender
+
+- (IBAction)cancel:(id)sender
 {
-	[sender resignFirstResponder];
+	[self.delegate HandicapViewControllerDidCancel:self];
 }
--(IBAction)dismissScore:(id)sender
+- (IBAction)done:(id)sender
 {
-	[sender resignFirstResponder];
+	[self.delegate HandicapViewControllerDidCancel:self];
 }
+
+
+
+
 
 @end
-
-
-
-
-

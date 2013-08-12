@@ -7,18 +7,39 @@
 //
 
 #import <UIKit/UIKit.h>
+#import <CoreData/CoreData.h>
+#import "HandicapMainControllerViewController.h"
+#import "Differential.h"
+#import "Rounds.h"
+#import "HandicapAppDelegate.h"
 
-@interface HandicapViewController : UIViewController
-{
 
-	IBOutlet UITextField *ratingValue;
-	IBOutlet UITextField *slopeValue;
-	IBOutlet UITextField *scoreValue;
-	IBOutlet UILabel	*differential;
-}
+@class HandicapViewController;
 
-- (IBAction)CalculateDifferential:(UIButton *)sender;
--(IBAction)dismissRating:(id)sender;
--(IBAction)dismissSlope:(id)sender;
--(IBAction)dismissScore:(id)sender;
+@protocol HandicapViewControllerDelegate <NSObject>
+- (void)HandicapViewControllerDidCancel:
+(HandicapViewController *)controller;
+@end
+
+@interface HandicapViewController
+
+@property (nonatomic, weak) id <HandicapViewControllerDelegate> delegate;
+
+@property (strong,nonatomic)IBOutlet UITextField *ratingValue;
+@property (strong,nonatomic)IBOutlet UITextField *slopeValue;
+@property (strong,nonatomic)IBOutlet UITextField *scoreValue;
+@property (strong,nonatomic)IBOutlet UILabel	*differential;
+@property (strong,nonatomic)IBOutlet UITextField *dateValue;
+@property (strong,nonatomic)IBOutlet UILabel *courseNameValue;
+
+
+-(IBAction)CalculateDifferentialAction:(UIButton *)sender;
+-(IBAction)dismissKeyboard:(id)sender;
+-(IBAction)CancelAddRound:(id)sender;
+
+@property (nonatomic,strong)NSString *mymessage;
+@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+
+
 @end
