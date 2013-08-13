@@ -18,12 +18,12 @@
 
 @synthesize mymessage;
 @synthesize diff = _diff;
-@synthesize delegate;
+@synthesize temp;
+@synthesize datepicker = _datepicker;
 
 @synthesize ratingValue=_ratingValue;
 @synthesize slopeValue=_slopeValue;
 @synthesize scoreValue=_scoreValue;
-@synthesize differential;
 @synthesize dateValue=_dateValue;
 @synthesize courseNameValue=_courseNameValue;
 
@@ -56,18 +56,17 @@
 -(void)AddRound
 {
 
-	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
+	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
 	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
 	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
-	NSString * courseName = _courseNameValue.text;
-
-	
-
+	NSString *courseName=[NSString stringWithFormat:@"%@", _courseNameValue.text];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 	[formatter setDateFormat:@"MM-dd-yyyy"];
 	NSDate *date = [formatter dateFromString:_dateValue.text];
 
+	temp = [self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]];
+	NSNumber *differential = [[NSNumber alloc] initWithDouble:temp];
 
 	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 	NSManagedObjectContext* context = [appDelegate managedObjectContext];
@@ -81,20 +80,23 @@
 	NSError *error;
 	[context save:&error];
 
+	
+	
 	[newRound setValue:rating forKey:@"roundRating"];
 	[newRound setValue:slope forKey:@"roundSlope"];
 	[newRound setValue:score forKey:@"roundScore"];
 	[newRound setValue:date	forKey:@"roundDate"];
 	[newRound setValue:courseName forKey:@"roundCourseName"];
+	[newRound setValue:differential	forKey:@"roundDifferential"];
 
+	NSArray *rounddata=[self recordsInTable:@"Rounds" andManageObjectContext:context];
+    NSLog(@"Rounds %@",rounddata);
 
 }
 
 
 - (IBAction)CalculateDifferentialAction:(id)sender
 {
-
-	[self AddRound];
 
 	mymessage =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]]];
 
@@ -104,9 +106,19 @@
 													message:mymessage
 												   delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
 	[alert show];
+
+	[self AddRound];
 	
 }
 
+//- (IBAction)ShowDatePicker:(id)sender
+//{
+//	_datepicker = [[UIDatePicker alloc] init];
+//	_datepicker.datePickerMode = UIDatePickerModeDate;
+//	[_datepicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
+
+//	[_dateValue setInputView:_datepicker];
+//}
 
 
 -(IBAction)dismissKeyboard:(id)sender
@@ -115,14 +127,17 @@
 }
 
 
-- (IBAction)cancel:(id)sender
-{
-	[self.delegate HandicapViewControllerDidCancel:self];
-}
-- (IBAction)done:(id)sender
-{
-	[self.delegate HandicapViewControllerDidCancel:self];
-}
+-(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext
+	{
+		NSError *error=nil;
+		// **** log objects currently in database ****
+		// create fetch object, this object fetch's the objects out of the database
+		NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
+		NSEntityDescription *entity = [NSEntityDescription entityForName: tableName inManagedObjectContext:manageObjContext];
+		[fetchRequest setEntity:entity];
+		NSArray *fetchedObjects = [manageObjContext executeFetchRequest:fetchRequest error:&error];
+		return  fetchedObjects;
+	}
 
 
 

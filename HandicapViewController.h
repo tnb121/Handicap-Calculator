@@ -8,22 +8,14 @@
 
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
-#import "HandicapMainControllerViewController.h"
 #import "Differential.h"
 #import "Rounds.h"
 #import "HandicapAppDelegate.h"
 
 
-@class HandicapViewController;
 
-@protocol HandicapViewControllerDelegate <NSObject>
-- (void)HandicapViewControllerDidCancel:
-(HandicapViewController *)controller;
-@end
+@interface HandicapViewController: UIViewController
 
-@interface HandicapViewController
-
-@property (nonatomic, weak) id <HandicapViewControllerDelegate> delegate;
 
 @property (strong,nonatomic)IBOutlet UITextField *ratingValue;
 @property (strong,nonatomic)IBOutlet UITextField *slopeValue;
@@ -35,11 +27,17 @@
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;
 -(IBAction)dismissKeyboard:(id)sender;
--(IBAction)CancelAddRound:(id)sender;
+// -(IBAction)ShowDatePicker:(UIButton *)sender;
 
-@property (nonatomic,strong)NSString *mymessage;
+-(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext;
+
+
+
+@property (nonatomic,strong) NSString *mymessage;
+@property  double temp;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+
+@property (nonatomic,strong) UIDatePicker* datepicker;
 
 
 @end
