@@ -7,6 +7,8 @@
 //
 
 #import "HandicapViewController.h"
+#import "HandicapAppDelegate.h"
+#import "HomeScreenViewController.h"
 
 
 
@@ -20,6 +22,11 @@
 @synthesize diff = _diff;
 @synthesize temp;
 @synthesize datepicker = _datepicker;
+
+@synthesize fetchedResultsController = _fetchedResultsController;
+@synthesize managedObjectContext=_managedObjectContext;
+@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
+@synthesize managedObjectModel = _managedObjectModel;
 
 @synthesize ratingValue=_ratingValue;
 @synthesize slopeValue=_slopeValue;
@@ -138,8 +145,64 @@
 		NSArray *fetchedObjects = [manageObjContext executeFetchRequest:fetchRequest error:&error];
 		return  fetchedObjects;
 	}
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+
+	if ([[segue identifier] isEqualToString:@"SaveRoundSegue"])
+	{
+		[self prepareForSaveRoundSegue:segue sender:sender];
+		return;
+	}
+	NSLog(@"Unknown segue: %@", [segue identifier]);
+}
 
 
+
+- (void)prepareForSaveRoundSegue:(UIStoryboardSegue*)segue sender:(id)sender
+
+{
+
+		if (_managedObjectContext == nil)
+		{
+			_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
+		}
+
+		HomeScreenViewController* vc = [segue destinationViewController];
+		vc.managedObjectContext = self.managedObjectContext;
+
+}
+- (void)viewDidLoad
+{
+    [super viewDidLoad];
+	// Do any additional setup after loading the view, typically from a nib.
+
+}
+
+- (void)viewDidUnload
+{
+ 
+    [super viewDidUnload];
+}
+
+- (void)viewWillAppear:(BOOL)animated
+{
+    [super viewWillAppear:animated];
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+    [super viewDidAppear:animated];
+}
+
+- (void)viewWillDisappear:(BOOL)animated
+{
+	[super viewWillDisappear:animated];
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+	[super viewDidDisappear:animated];
+}
 
 
 

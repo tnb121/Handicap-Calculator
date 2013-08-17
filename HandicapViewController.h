@@ -35,9 +35,12 @@
 
 @property (nonatomic,strong) NSString *mymessage;
 @property  double temp;
-@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 
 @property (nonatomic,strong) UIDatePicker* datepicker;
 
+@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
+@property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
+@property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
 
 @end

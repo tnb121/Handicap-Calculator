@@ -21,8 +21,6 @@
 
 	return (score - rating) * slopeConstant / slope;
 
-	//-(int) sum: (int) a andb: (int) b andc:(int)c;{
-	//	return a+b+c;
 
 }
 
