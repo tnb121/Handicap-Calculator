@@ -18,4 +18,18 @@
 @dynamic roundCourseName;
 @dynamic roundDate;
 
+
+-(NSNumber *) countOfRounds
+{
+	//total number of rounds
+	return [Rounds valueForKeyPath: @"@count"];
+
+}
+
+
+
+
+
+
+
 @end

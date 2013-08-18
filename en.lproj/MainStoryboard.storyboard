@@ -10,7 +10,7 @@
             <objects>
                 <viewController id="6C7-fP-wLa" customClass="HomeScreenViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="1y8-p5-8Tb">
-                        <rect key="frame" x="0.0" y="64" width="320" height="416"/>
+                        <rect key="frame" x="0.0" y="20" width="320" height="460"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="D59-L3-cLv">
@@ -163,15 +163,16 @@
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="150" id="gg8-z7-xo2"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4kU-uC-NEf">
                                                     <constraints>
+                                                        <constraint firstAttribute="height" constant="21" id="e7H-pf-dKK"/>
                                                         <constraint firstAttribute="width" constant="66" id="jbB-M0-8jT"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
@@ -179,12 +180,15 @@
                                                     <constraints>
                                                         <constraint firstAttribute="width" constant="52" id="VP9-U9-YOK"/>
                                                     </constraints>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
                                                 <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Diff" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UrN-QR-ebr">
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="26" id="OGI-kM-eLd"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="12"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                                     <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                                 </label>
@@ -193,15 +197,18 @@
                                         </view>
                                         <constraints>
                                             <constraint firstAttribute="trailing" secondItem="UrN-QR-ebr" secondAttribute="trailing" constant="20" type="default" id="6ob-3j-V21"/>
+                                            <constraint firstItem="4kU-uC-NEf" firstAttribute="top" secondItem="aT1-iM-C4J" secondAttribute="top" type="default" id="7dt-iP-uXR"/>
                                             <constraint firstItem="4kU-uC-NEf" firstAttribute="leading" secondItem="5Wh-fX-Fag" secondAttribute="leading" constant="10" id="Dct-Ec-AmO"/>
+                                            <constraint firstItem="kSH-bo-ppm" firstAttribute="baseline" secondItem="aT1-iM-C4J" secondAttribute="baseline" type="default" id="K42-Eb-xDI"/>
+                                            <constraint firstItem="4kU-uC-NEf" firstAttribute="baseline" secondItem="aT1-iM-C4J" secondAttribute="baseline" type="default" id="NT0-jf-CQh"/>
                                             <constraint firstItem="JYG-Fx-28x" firstAttribute="top" secondItem="5Wh-fX-Fag" secondAttribute="top" constant="66" id="PBh-o4-hYn"/>
-                                            <constraint firstItem="aT1-iM-C4J" firstAttribute="baseline" secondItem="kSH-bo-ppm" secondAttribute="baseline" type="default" id="PVn-rX-mqO"/>
                                             <constraint firstItem="JYG-Fx-28x" firstAttribute="leading" secondItem="5Wh-fX-Fag" secondAttribute="leading" type="default" id="ReH-zD-vTh"/>
-                                            <constraint firstItem="UrN-QR-ebr" firstAttribute="baseline" secondItem="kSH-bo-ppm" secondAttribute="baseline" type="default" id="UPM-qy-4W7"/>
                                             <constraint firstItem="4kU-uC-NEf" firstAttribute="top" secondItem="5Wh-fX-Fag" secondAttribute="top" constant="11" id="VlP-ak-BTz"/>
+                                            <constraint firstItem="kSH-bo-ppm" firstAttribute="top" secondItem="UrN-QR-ebr" secondAttribute="top" type="default" id="Xlb-YE-trE"/>
                                             <constraint firstItem="PPM-TG-Nsj" firstAttribute="baseline" secondItem="JYG-Fx-28x" secondAttribute="baseline" type="default" id="d36-TL-Yhb"/>
+                                            <constraint firstItem="kSH-bo-ppm" firstAttribute="bottom" secondItem="UrN-QR-ebr" secondAttribute="bottom" type="default" id="lLW-A7-2nk"/>
                                             <constraint firstItem="UrN-QR-ebr" firstAttribute="leading" secondItem="kSH-bo-ppm" secondAttribute="trailing" constant="8" symbolic="YES" type="default" id="mP4-6N-LSD"/>
-                                            <constraint firstItem="aT1-iM-C4J" firstAttribute="baseline" secondItem="4kU-uC-NEf" secondAttribute="baseline" type="default" id="pIc-0e-Vdw"/>
+                                            <constraint firstItem="kSH-bo-ppm" firstAttribute="top" secondItem="aT1-iM-C4J" secondAttribute="top" type="default" id="nuv-vM-ZMk"/>
                                             <constraint firstItem="PPM-TG-Nsj" firstAttribute="leading" secondItem="5Wh-fX-Fag" secondAttribute="leading" type="default" id="s1h-aY-T5g"/>
                                             <constraint firstItem="aT1-iM-C4J" firstAttribute="leading" secondItem="5Wh-fX-Fag" secondAttribute="leading" constant="72" id="t0S-4p-ccZ"/>
                                         </constraints>
@@ -350,7 +357,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="4" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1322" y="-1169"/>
+            <point key="canvasLocation" x="835" y="-1049"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="o56-8n-9rj">
@@ -369,25 +376,6 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dAj-J1-D1R" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-195" y="-1169"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="JEf-9f-VoW">
-            <objects>
-                <navigationController id="kcl-Eg-Up2" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" id="QBq-Gd-2TY"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="FZb-Xr-K5c">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="2" kind="relationship" relationship="rootViewController" id="uAx-cv-WAk"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="lQ7-6Q-TI7" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="830" y="-1564"/>
         </scene>
     </scenes>
     <classes>
@@ -426,7 +414,6 @@
         <simulatedScreenMetrics key="destination"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="Koo-ac-KYS"/>
-        <segue reference="FAc-wb-0e6"/>
+        <segue reference="698-TT-xxi"/>
     </inferredMetricsTieBreakers>
 </document>

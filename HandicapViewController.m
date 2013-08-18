@@ -75,6 +75,8 @@
 	temp = [self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]];
 	NSNumber *differential = [[NSNumber alloc] initWithDouble:temp];
 
+	
+
 	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 	NSManagedObjectContext* context = [appDelegate managedObjectContext];
 

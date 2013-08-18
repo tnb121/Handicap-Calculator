@@ -19,4 +19,6 @@
 @property (nonatomic, retain) NSString * roundCourseName;
 @property (nonatomic,retain) NSDate * roundDate;
 
+-(NSNumber *) countOfRounds;
+
 @end
