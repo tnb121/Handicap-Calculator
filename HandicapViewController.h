@@ -20,14 +20,14 @@
 @property (strong,nonatomic)IBOutlet UITextField *ratingValue;
 @property (strong,nonatomic)IBOutlet UITextField *slopeValue;
 @property (strong,nonatomic)IBOutlet UITextField *scoreValue;
-@property (strong,nonatomic)IBOutlet UILabel	*differential;
 @property (strong,nonatomic)IBOutlet UITextField *dateValue;
-@property (strong,nonatomic)IBOutlet UILabel *courseNameValue;
+@property (strong,nonatomic)IBOutlet UITextField *courseNameValue;
+@property (strong,nonatomic)IBOutlet UILabel *differential;
 
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;
 -(IBAction)dismissKeyboard:(id)sender;
-// -(IBAction)ShowDatePicker:(UIButton *)sender;
+
 
 -(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext;
 
@@ -36,7 +36,6 @@
 @property (nonatomic,strong) NSString *mymessage;
 @property  double temp;
 
-@property (nonatomic,strong) UIDatePicker* datepicker;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;

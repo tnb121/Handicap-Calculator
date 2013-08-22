@@ -136,7 +136,7 @@
                                     <constraint firstAttribute="height" constant="291" id="6fB-Ds-tbW"/>
                                 </constraints>
                                 <prototypes>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="handicapTableCell" id="5Wh-fX-Fag" customClass="HandicapCell">
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" reuseIdentifier="roundTableCell" id="5Wh-fX-Fag" customClass="RoundCell">
                                         <rect key="frame" x="0.0" y="22" width="320" height="44"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center">
@@ -213,9 +213,13 @@
                                             <constraint firstItem="aT1-iM-C4J" firstAttribute="leading" secondItem="5Wh-fX-Fag" secondAttribute="leading" constant="72" id="t0S-4p-ccZ"/>
                                         </constraints>
                                         <connections>
+                                            <outlet property="courseNameCell" destination="aT1-iM-C4J" id="9kd-7z-fce"/>
                                             <outlet property="courseNameLabel" destination="PPM-TG-Nsj" id="yLs-g2-2Ih"/>
+                                            <outlet property="dateCell" destination="4kU-uC-NEf" id="c1r-tV-wh9"/>
                                             <outlet property="dateLabel" destination="JYG-Fx-28x" id="cJT-08-TQc"/>
+                                            <outlet property="differentialCell" destination="UrN-QR-ebr" id="8hR-ko-LrP"/>
                                             <outlet property="differentialLabel" destination="UrN-QR-ebr" id="DK9-hV-869"/>
+                                            <outlet property="scoreCell" destination="kSH-bo-ppm" id="D6l-BQ-5Ve"/>
                                             <outlet property="scoreLabel" destination="kSH-bo-ppm" id="4yp-mK-7Ba"/>
                                         </connections>
                                     </tableViewCell>
@@ -244,6 +248,9 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <outlet property="scoringAverage" destination="TSz-UN-XIa" id="7fJ-Mc-Xg2"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BlC-zy-RcY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -313,43 +320,31 @@
                                     <segue destination="6C7-fP-wLa" kind="push" identifier="SaveRoundSegue" id="698-TT-xxi"/>
                                 </connections>
                             </button>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Hyb-Zf-ycC">
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="34" id="DSc-xo-QFV"/>
-                                    <constraint firstAttribute="width" constant="287" id="kyW-mY-bSh"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                         </subviews>
                         <color key="backgroundColor" red="0.90196079015731812" green="0.90196079015731812" blue="0.90196079015731812" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="fRp-wq-3bc" firstAttribute="trailing" secondItem="FJq-hc-hhc" secondAttribute="trailing" type="default" id="9Zw-yg-1o5"/>
                             <constraint firstItem="fRp-wq-3bc" firstAttribute="top" secondItem="FJq-hc-hhc" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="HC7-k2-0Iv"/>
                             <constraint firstItem="Ie0-8o-cp7" firstAttribute="trailing" secondItem="fRp-wq-3bc" secondAttribute="trailing" type="default" id="Ha8-Vy-auR"/>
+                            <constraint firstItem="he2-yq-vK5" firstAttribute="leading" secondItem="3" secondAttribute="leading" constant="24" id="IMW-uP-ME6"/>
                             <constraint firstItem="wBr-ZW-umo" firstAttribute="top" secondItem="he2-yq-vK5" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="MQn-gQ-CX2"/>
-                            <constraint firstItem="Hyb-Zf-ycC" firstAttribute="top" secondItem="3" secondAttribute="top" type="default" id="Mqx-HC-Gej"/>
                             <constraint firstItem="Ie0-8o-cp7" firstAttribute="top" secondItem="fRp-wq-3bc" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="QpA-lC-vnG"/>
                             <constraint firstItem="Ie0-8o-cp7" firstAttribute="leading" secondItem="fRp-wq-3bc" secondAttribute="leading" type="default" id="Tjr-fI-NRE"/>
-                            <constraint firstItem="Hyb-Zf-ycC" firstAttribute="centerX" secondItem="3" secondAttribute="centerX" type="default" id="UuV-1d-0HO"/>
                             <constraint firstItem="1Zc-82-jIe" firstAttribute="top" secondItem="3" secondAttribute="top" constant="85" id="V74-x6-qgg"/>
+                            <constraint firstItem="he2-yq-vK5" firstAttribute="top" secondItem="3" secondAttribute="top" constant="4" id="dQE-EK-EcS"/>
                             <constraint firstItem="FJq-hc-hhc" firstAttribute="leading" secondItem="fRp-wq-3bc" secondAttribute="leading" type="default" id="dWq-a2-vTU"/>
                             <constraint firstItem="FJq-hc-hhc" firstAttribute="trailing" secondItem="wBr-ZW-umo" secondAttribute="trailing" type="default" id="fJj-yg-jGn"/>
                             <constraint firstAttribute="trailing" secondItem="1Zc-82-jIe" secondAttribute="trailing" constant="38" id="hH7-Yl-1h4"/>
-                            <constraint firstItem="wBr-ZW-umo" firstAttribute="top" secondItem="Hyb-Zf-ycC" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="hfO-EA-fr5"/>
                             <constraint firstItem="wBr-ZW-umo" firstAttribute="leading" secondItem="he2-yq-vK5" secondAttribute="leading" type="default" id="jr6-L4-2V3"/>
                             <constraint firstItem="FJq-hc-hhc" firstAttribute="top" secondItem="wBr-ZW-umo" secondAttribute="bottom" constant="8" symbolic="YES" type="default" id="toW-SU-APu"/>
                             <constraint firstItem="FJq-hc-hhc" firstAttribute="leading" secondItem="wBr-ZW-umo" secondAttribute="leading" type="default" id="wZb-tK-RQf"/>
-                            <constraint firstItem="Hyb-Zf-ycC" firstAttribute="trailing" secondItem="he2-yq-vK5" secondAttribute="trailing" type="default" id="xYt-On-ZoU"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="lj2-JA-usx"/>
                     <nil key="simulatedTopBarMetrics"/>
                     <connections>
-                        <outlet property="courseNameValue" destination="Hyb-Zf-ycC" id="7nD-lg-Bht"/>
+                        <outlet property="courseNameValue" destination="he2-yq-vK5" id="t7G-Sk-z0m"/>
                         <outlet property="dateValue" destination="wBr-ZW-umo" id="xB4-vi-boJ"/>
-                        <outlet property="differential" destination="Hyb-Zf-ycC" id="iVT-zF-8uU"/>
                         <outlet property="ratingValue" destination="FJq-hc-hhc" id="Kbc-G2-2Zt"/>
                         <outlet property="scoreValue" destination="Ie0-8o-cp7" id="EUj-Pi-IBV"/>
                         <outlet property="slopeValue" destination="fRp-wq-3bc" id="JQu-8l-1gu"/>
@@ -379,21 +374,12 @@
         </scene>
     </scenes>
     <classes>
-        <class className="HandicapCell" superclassName="UITableViewCell">
-            <source key="sourceIdentifier" type="project" relativePath="./Classes/HandicapCell.h"/>
-            <relationships>
-                <relationship kind="outlet" name="courseNameLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="dateLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="differentialLabel" candidateClass="UILabel"/>
-                <relationship kind="outlet" name="scoreLabel" candidateClass="UILabel"/>
-            </relationships>
-        </class>
         <class className="HandicapViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/HandicapViewController.h"/>
             <relationships>
                 <relationship kind="action" name="CalculateDifferentialAction:" candidateClass="UIButton"/>
                 <relationship kind="action" name="dismissKeyboard:"/>
-                <relationship kind="outlet" name="courseNameValue" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="courseNameValue" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="dateValue" candidateClass="UITextField"/>
                 <relationship kind="outlet" name="differential" candidateClass="UILabel"/>
                 <relationship kind="outlet" name="ratingValue" candidateClass="UITextField"/>
@@ -403,9 +389,21 @@
         </class>
         <class className="HomeScreenViewController" superclassName="UIViewController">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/HomeScreenViewController.h"/>
+            <relationships>
+                <relationship kind="outlet" name="scoringAverage" candidateClass="UILabel"/>
+            </relationships>
         </class>
         <class className="NSLayoutConstraint" superclassName="NSObject">
             <source key="sourceIdentifier" type="project" relativePath="./Classes/NSLayoutConstraint.h"/>
+        </class>
+        <class className="RoundCell" superclassName="UITableViewCell">
+            <source key="sourceIdentifier" type="project" relativePath="./Classes/RoundCell.h"/>
+            <relationships>
+                <relationship kind="outlet" name="courseNameCell" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="dateCell" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="differentialCell" candidateClass="UILabel"/>
+                <relationship kind="outlet" name="scoreCell" candidateClass="UILabel"/>
+            </relationships>
         </class>
     </classes>
     <simulatedMetricsContainer key="defaultSimulatedMetrics">

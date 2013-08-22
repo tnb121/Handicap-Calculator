@@ -6,9 +6,11 @@
 //  Copyright (c) 2013 Todd Bohannon. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
 #import "HandicapViewController.h"
 #import "HandicapAppDelegate.h"
 #import "HomeScreenViewController.h"
+#import "DatePickerView.h"
 
 
 
@@ -21,7 +23,6 @@
 @synthesize mymessage;
 @synthesize diff = _diff;
 @synthesize temp;
-@synthesize datepicker = _datepicker;
 
 @synthesize fetchedResultsController = _fetchedResultsController;
 @synthesize managedObjectContext=_managedObjectContext;
@@ -33,6 +34,7 @@
 @synthesize scoreValue=_scoreValue;
 @synthesize dateValue=_dateValue;
 @synthesize courseNameValue=_courseNameValue;
+@synthesize differential=_differential;
 
 -(Differential*) diff
 
@@ -60,18 +62,19 @@
 	return score;
 }
 
+
 -(void)AddRound
 {
 
 	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
 	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
 	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
-	NSString *courseName=[NSString stringWithFormat:@"%@", _courseNameValue.text];
+	NSString *courseName = [NSString stringWithFormat:@"%@", _courseNameValue.text];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"MM-dd-yyyy"];
-	NSDate *date = [formatter dateFromString:_dateValue.text];
-
+	[formatter setDateFormat:@"yyyy-MM-dd"];
+	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:9]];
+					
 	temp = [self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]];
 	NSNumber *differential = [[NSNumber alloc] initWithDouble:temp];
 
@@ -177,7 +180,8 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-
+	DatePickerView *dateEntryView = [[DatePickerView alloc] init];
+	self.dateValue.inputView = dateEntryView;
 }
 
 - (void)viewDidUnload
@@ -205,6 +209,7 @@
 {
 	[super viewDidDisappear:animated];
 }
+
 
 
 
