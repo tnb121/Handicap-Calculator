@@ -15,22 +15,31 @@
 UITextField *_inputField;
 
 // TARGET METHODS
--(void)pickerValueChanged:(UIDatePicker *)picker{
+
+
+-(void)pickerValueChanged:(UIDatePicker *)picker
+{
     _inputField.text = self.datePicker.date.description; // set text to date description
 }
--(void)viewDoubleTapped:(UITapGestureRecognizer *)tapGR{
+-(void)viewDoubleTapped:(UITapGestureRecognizer *)tapGR
+{
     [_inputField resignFirstResponder]; // upon double-tap dismiss picker
 }
--(void)textFieldBeganEditing:(NSNotification *)note{
-    _inputField = note.object; // set ivar to current first responder
+-(void)textFieldBeganEditing:(NSNotification *)note
+{
+	_inputField = note.object; // set ivar to current first responder
+	 
 }
--(void)textFieldEndedEditing:(NSNotification *)note{
+-(void)textFieldEndedEditing:(NSNotification *)note
+{
     _inputField  = nil; // the first responder ended editing CRITICAL:avoids retain cycle
 }
 // INITI METHODS
 -(void)initializationCodeMethod{
     _datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, 320, 0)];// All pickers have preset height
-    self.bounds = _datePicker.frame; // Make our view same size as picker
+	_datePicker.datePickerMode = UIDatePickerModeDate;
+	self.bounds = _datePicker.frame; // Make our view same size as picker
+
     [self addSubview:_datePicker];
     [_datePicker addTarget:self action:@selector(pickerValueChanged:) forControlEvents:UIControlEventValueChanged]; // register to be notified when the value changes
 																													// As an example we'll use a tap gesture recognizer to dismiss on a double-tap

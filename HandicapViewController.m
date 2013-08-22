@@ -123,16 +123,6 @@
 	
 }
 
-//- (IBAction)ShowDatePicker:(id)sender
-//{
-//	_datepicker = [[UIDatePicker alloc] init];
-//	_datepicker.datePickerMode = UIDatePickerModeDate;
-//	[_datepicker addTarget:self action:@selector(datePickerValueChanged:) forControlEvents:UIControlEventValueChanged];
-
-//	[_dateValue setInputView:_datepicker];
-//}
-
-
 -(IBAction)dismissKeyboard:(id)sender
 {
 	[sender resignFirstResponder];

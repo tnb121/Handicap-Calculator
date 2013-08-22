@@ -31,8 +31,6 @@
 
 -(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext;
 
-
-
 @property (nonatomic,strong) NSString *mymessage;
 @property  double temp;
 
