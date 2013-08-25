@@ -12,6 +12,8 @@
 @implementation DatePickerView
 
 @synthesize datePicker = _datePicker;
+@synthesize dateText;
+
 UITextField *_inputField;
 
 // TARGET METHODS
@@ -19,7 +21,9 @@ UITextField *_inputField;
 
 -(void)pickerValueChanged:(UIDatePicker *)picker
 {
-    _inputField.text = self.datePicker.date.description; // set text to date description
+	dateText = self.datePicker.date.description;
+
+	_inputField.text = self.datePicker.date.description; // set text to date description
 }
 -(void)viewDoubleTapped:(UITapGestureRecognizer *)tapGR
 {
@@ -28,16 +32,16 @@ UITextField *_inputField;
 -(void)textFieldBeganEditing:(NSNotification *)note
 {
 	_inputField = note.object; // set ivar to current first responder
-	 
 }
 -(void)textFieldEndedEditing:(NSNotification *)note
 {
-    _inputField  = nil; // the first responder ended editing CRITICAL:avoids retain cycle
+	_inputField  = nil; // the first responder ended editing CRITICAL:avoids retain cycle
 }
 // INITI METHODS
 -(void)initializationCodeMethod{
     _datePicker = [[UIDatePicker alloc] initWithFrame:CGRectMake(0, 0, 320, 0)];// All pickers have preset height
 	_datePicker.datePickerMode = UIDatePickerModeDate;
+	_datePicker.maximumDate=[NSDate date];
 	self.bounds = _datePicker.frame; // Make our view same size as picker
 
     [self addSubview:_datePicker];

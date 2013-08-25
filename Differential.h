@@ -14,7 +14,4 @@
 
 -(double)CalculateDifferential:(double)rating withslope:(double)slope withscore:(double)score;
 
-//-(int) sum: (int) a andb: (int) b andc:(int)c;
-
-
 @end

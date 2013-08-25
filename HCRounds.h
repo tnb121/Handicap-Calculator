@@ -10,7 +10,7 @@
 #import <CoreData/CoreData.h>
 
 
-@interface Rounds : NSManagedObject
+@interface HCRounds : NSManagedObject
 
 @property (nonatomic, retain) NSNumber * roundDifferential;
 @property (nonatomic, retain) NSNumber * roundRating;
@@ -19,6 +19,10 @@
 @property (nonatomic, retain) NSString * roundCourseName;
 @property (nonatomic,retain) NSDate * roundDate;
 
--(NSNumber *) countOfRounds;
+@property (nonatomic,retain) NSManagedObjectContext * managedObjectContext;
+
++(NSNumber *)aggregateOperation:(NSString *)function onAttribute:(NSString *)attributeName withPredicate:(NSPredicate *)predicate inManagedObjectContext:(NSManagedObjectContext *)context;
+
+
 
 @end

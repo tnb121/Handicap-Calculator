@@ -20,8 +20,6 @@
 	double slopeConstant= 113.00;
 
 	return (score - rating) * slopeConstant / slope;
-
-
 }
 
 @end

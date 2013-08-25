@@ -10,6 +10,7 @@
 
 @interface DatePickerView : UIView
 @property (nonatomic,strong) UIDatePicker* datePicker;
+@property (nonatomic,strong)NSString * dateText;
 
 
 
