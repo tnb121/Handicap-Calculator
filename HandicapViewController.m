@@ -72,7 +72,7 @@
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 	[formatter setDateFormat:@"yyyy-MM-dd"];
-	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:9]];
+	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:10]];
 					
 	temp = [self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]];
 	NSNumber *differential = [[NSNumber alloc] initWithDouble:temp];
