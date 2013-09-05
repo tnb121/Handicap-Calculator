@@ -7,7 +7,7 @@
 //
 
 #import "HandicapAppDelegate.h"
-#import "HandicapViewController.h"
+#import "AddRoundViewController.h"
 #import "HomeScreenViewController.h"
 
 @interface HandicapAppDelegate()
@@ -23,15 +23,12 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
+	UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
+	UINavigationController *navigationController = [[tabBarController viewControllers] objectAtIndex:0];
+	HomeScreenViewController *controller = [[navigationController viewControllers] objectAtIndex:0];
+	controller.managedObjectContext = self.managedObjectContext;
 
-
-	// Override point for customization after application launch.
-	UINavigationController *navigationController = (UINavigationController *)self.window.rootViewController;
-    HomeScreenViewController *controller = (HomeScreenViewController *)navigationController.topViewController;
-    controller.managedObjectContext = self.managedObjectContext;
-
-
-    return YES;
+	return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

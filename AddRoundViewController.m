@@ -7,10 +7,12 @@
 //
 
 #import <UIKit/UIKit.h>
-#import "HandicapViewController.h"
+#import "AddRoundViewController.h"
 #import "HandicapAppDelegate.h"
 #import "HomeScreenViewController.h"
-#import "DatePickerView.h"
+#import "Rounds.h"
+#import "Tee.h"
+#import "Courses.h"
 
 
 
@@ -22,7 +24,7 @@
 
 @synthesize mymessage;
 @synthesize diff = _diff;
-@synthesize temp;
+@synthesize teeColors=_teeColors;
 
 @synthesize fetchedResultsController = _fetchedResultsController;
 @synthesize managedObjectContext=_managedObjectContext;
@@ -34,7 +36,7 @@
 @synthesize scoreValue=_scoreValue;
 @synthesize dateValue=_dateValue;
 @synthesize courseNameValue=_courseNameValue;
-@synthesize differential=_differential;
+@synthesize teeValue=_teeValue;
 
 -(Differential*) diff
 
@@ -65,43 +67,45 @@
 -(void)AddRound
 {
 
-	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
+	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
 	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
 	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
 	NSString *courseName = [NSString stringWithFormat:@"%@", _courseNameValue.text];
+	NSString *teeColor = [NSString stringWithFormat:@"%@", _teeValue.text];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 	[formatter setDateFormat:@"yyyy-MM-dd"];
 	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:10]];
-					
-	temp = [self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]];
-	NSNumber *differential = [[NSNumber alloc] initWithDouble:temp];
+
+	NSNumber *differential = [[NSNumber alloc] initWithDouble:[self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]]];
 
 	
 
 	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 	NSManagedObjectContext* context = [appDelegate managedObjectContext];
 
-	NSEntityDescription *rounds = [NSEntityDescription entityForName:@"Rounds" inManagedObjectContext:context];
+		NSEntityDescription *roundsEntity = [NSEntityDescription entityForName:@"Rounds" inManagedObjectContext:context];
 	NSFetchRequest *request =[[NSFetchRequest alloc]init];
-	[request setEntity:rounds];
+	[request setEntity:roundsEntity];
 
-	NSManagedObject *newRound;
-	newRound = [NSEntityDescription insertNewObjectForEntityForName:@"Rounds" inManagedObjectContext:context];
+	Rounds * rounds = [NSEntityDescription insertNewObjectForEntityForName:@"Rounds" inManagedObjectContext:context];
+	[rounds setValue:score forKey:@"roundScore"];
+	[rounds setValue:date	forKey:@"roundDate"];
+    [rounds setValue:differential	forKey:@"roundDifferential"];
+
+	Courses	* courses = [NSEntityDescription insertNewObjectForEntityForName:@"Courses" inManagedObjectContext:context];
+	[courses setValue:rating forKey:@"courseRating"];
+	[courses setValue:slope forKey:@"courseSlope"];
+	[courses setValue:courseName forKey:@"courseName"];
+	rounds.courses = courses;
+
+	Tee	* tee = [NSEntityDescription insertNewObjectForEntityForName:@"Tee" inManagedObjectContext:context];
+	[tee setValue:teeColor forKey:@"teeColor"];
+
+	courses.tees = tee;
+
 	NSError *error;
 	[context save:&error];
-
-	
-	
-	[newRound setValue:rating forKey:@"roundRating"];
-	[newRound setValue:slope forKey:@"roundSlope"];
-	[newRound setValue:score forKey:@"roundScore"];
-	[newRound setValue:date	forKey:@"roundDate"];
-	[newRound setValue:courseName forKey:@"roundCourseName"];
-	[newRound setValue:differential	forKey:@"roundDifferential"];
-
-	NSArray *rounddata=[self recordsInTable:@"Rounds" andManageObjectContext:context];
-    NSLog(@"Rounds %@",rounddata);
 
 }
 
@@ -169,8 +173,6 @@
 {
     [super viewDidLoad];
 	// Do any additional setup after loading the view, typically from a nib.
-	DatePickerView *dateEntryView = [[DatePickerView alloc] init];
-	self.dateValue.inputView = dateEntryView;
 }
 
 - (void)viewDidUnload
@@ -199,7 +201,79 @@
 	[super viewDidDisappear:animated];
 }
 
+- (IBAction)showDatePicker:(id)sender
+{
+	UIDatePicker *datePicker = [[UIDatePicker alloc]init];
+	datePicker.datePickerMode = UIDatePickerModeDate;
 
+	
+	[datePicker setDate:[NSDate date]];
+	 [datePicker addTarget:self action:@selector(updateTextField:) forControlEvents:UIControlEventValueChanged];
+	 [self.dateValue setInputView:datePicker];
+
+	
+
+	UIDatePicker *picker = (UIDatePicker*)self.dateValue.inputView;
+
+	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+	[formatter setDateFormat:@"yyyy-MM-dd"];
+	NSDate *date = [formatter dateFromString:[[NSString stringWithFormat:@"%@",picker.date] substringToIndex:10]];
+	NSString * dateInput = [NSString stringWithFormat:@"%@",date];
+	self.dateValue.text = dateInput;
+
+}
+-(void)updateTextField:(id)sender
+{
+	UIDatePicker *picker = (UIDatePicker*)self.dateValue.inputView;
+
+	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
+	[formatter setDateFormat:@"yyyy-MM-dd"];
+	NSDate *date = [formatter dateFromString:[[NSString stringWithFormat:@"%@",picker.date] substringToIndex:10]];
+	NSString * dateInput = [NSString stringWithFormat:@"%@",date];
+	self.dateValue.text = dateInput;
+
+}
+
+-(IBAction)showTeePicker:(id)sender
+{
+	UIPickerView *teePicker = [[UIPickerView alloc] init];
+	teePicker.delegate =self;
+	teePicker.showsSelectionIndicator = YES;
+	[self.teeValue setInputView:teePicker];
+
+	// initialize the Array of tee colors
+	_teeColors= [[NSMutableArray alloc] init];
+	[_teeColors addObject:@"Black"];
+	[_teeColors addObject:@"Blue"];
+	[_teeColors addObject:@"Gold"];
+	[_teeColors addObject:@"Green"];
+	[_teeColors addObject:@"Red"];
+	[_teeColors addObject:@"White"];
+	[_teeColors addObject:@"Other"];
+
+}
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+	//One column
+	return 1;
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+	//set number of rows
+	return _teeColors.count;
+}
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+	//set item per row
+	return [_teeColors objectAtIndex:row];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    _teeValue.text=[_teeColors objectAtIndex:row];
+}
 
 
 @end

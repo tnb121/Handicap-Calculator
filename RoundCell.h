@@ -15,5 +15,4 @@
 @property (nonatomic,strong)IBOutlet UILabel *scoreCell;
 @property (nonatomic,strong)IBOutlet UILabel *differentialCell;
 
-
 @end

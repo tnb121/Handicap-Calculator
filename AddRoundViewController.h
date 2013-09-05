@@ -9,12 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 #import "Differential.h"
-#import "HCRounds.h"
+#import "Rounds.h"
 #import "HandicapAppDelegate.h"
 
 
 
-@interface HandicapViewController: UIViewController
+@interface HandicapViewController: UIViewController<UITextFieldDelegate,UIPickerViewDataSource, UIPickerViewDelegate> 
 
 
 @property (strong,nonatomic)IBOutlet UITextField *ratingValue;
@@ -22,17 +22,20 @@
 @property (strong,nonatomic)IBOutlet UITextField *scoreValue;
 @property (strong,nonatomic)IBOutlet UITextField *dateValue;
 @property (strong,nonatomic)IBOutlet UITextField *courseNameValue;
-@property (strong,nonatomic)IBOutlet UILabel *differential;
+@property (strong,nonatomic)IBOutlet UITextField * teeValue;
+
 
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;
 -(IBAction)dismissKeyboard:(id)sender;
+-(IBAction)showTeePicker:(id)sender;
+
 
 
 -(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext;
 
 @property (nonatomic,strong) NSString *mymessage;
-@property  double temp;
+@property (nonatomic, retain) NSMutableArray *teeColors;
 
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;

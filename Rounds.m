@@ -2,26 +2,22 @@
 //  Rounds.m
 //  Handicap Calculator
 //
-//  Created by Todd Bohannon on 8/3/13.
+//  Created by Todd Bohannon on 8/29/13.
 //  Copyright (c) 2013 Todd Bohannon. All rights reserved.
 //
 
-#import "HCRounds.h"
+#import "Rounds.h"
+#import "Courses.h"
 
 
-@implementation HCRounds
+@implementation Rounds
 
-@dynamic roundDifferential;
-@dynamic roundRating;
-@dynamic roundScore;
-@dynamic roundSlope;
-@dynamic roundCourseName;
 @dynamic roundDate;
+@dynamic roundDifferential;
+@dynamic roundScore;
+@dynamic courses;
 
 @synthesize managedObjectContext=_managedObjectContext;
-
-
-
 
 
 +(NSNumber *)aggregateOperation:(NSString *)function onAttribute:(NSString *)attributeName withPredicate:(NSPredicate *)predicate inManagedObjectContext:(NSManagedObjectContext *)context
@@ -53,8 +49,6 @@
     return resultValue;
 	
 }
-
-
 
 
 
