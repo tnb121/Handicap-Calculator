@@ -33,6 +33,7 @@
 											  entityForName:@"Rounds" inManagedObjectContext:moc];
 	NSFetchRequest *request = [[NSFetchRequest alloc] init];
 	[request setEntity:entityDescription];
+	[request setFetchLimit:20];
 
 	NSError *error;
 
@@ -57,9 +58,6 @@
 	NSString * countString = [roundCount stringValue];
 	return countString;
 }
-
-
-
 
 -(void) setHandicapParameters
 {
@@ -98,7 +96,6 @@
 
 -(NSString*)handicapCalculation
 {
-
 	_roundCountForHandicap=[self CalculateHCapRounds:(double) [[self roundCountCalculation] doubleValue]];
 
 	_handicapValue = [self calculateDifferentialSum] / _roundCountForHandicap * 0.96*10;

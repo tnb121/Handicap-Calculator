@@ -8,6 +8,7 @@
 
 #import "Courses.h"
 #import "Rounds.h"
+#import "Tee.h"
 
 
 @implementation Courses

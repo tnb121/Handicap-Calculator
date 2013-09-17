@@ -11,10 +11,11 @@
 #import "Differential.h"
 #import "Rounds.h"
 #import "HandicapAppDelegate.h"
+#import "KeyboardController.h"
 
 
 
-@interface HandicapViewController: UIViewController<UITextFieldDelegate,UIPickerViewDataSource, UIPickerViewDelegate> 
+@interface HandicapViewController: UIViewController<UITextFieldDelegate,KeyboardControllerDelegate,UIPickerViewDataSource, UIPickerViewDelegate>
 
 
 @property (strong,nonatomic)IBOutlet UITextField *ratingValue;
@@ -23,7 +24,6 @@
 @property (strong,nonatomic)IBOutlet UITextField *dateValue;
 @property (strong,nonatomic)IBOutlet UITextField *courseNameValue;
 @property (strong,nonatomic)IBOutlet UITextField * teeValue;
-
 
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;

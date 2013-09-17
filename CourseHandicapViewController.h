@@ -11,11 +11,14 @@
 #import "HandicapAppDelegate.h"
 #import "HomeScreenViewController.h"
 #import "Handicap.h"
+#import "Courses.h"
+#import "Tee.h"
 
-@interface CourseHandicapViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,NSFetchedResultsControllerDelegate>
+@interface CourseHandicapViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,NSFetchedResultsControllerDelegate,KeyboardControllerDelegate>
+
+@property (strong, nonatomic) IBOutlet UITableView *courseData;
 
 @property (strong, nonatomic) IBOutlet UITextField *courseHandicapSlopeValue;
-@property (strong, nonatomic) IBOutlet UITextField *courseHandicapRatingValue;
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapMyHandicapLabel;
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapLabel;
 

@@ -8,8 +8,10 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "Tee.h"
 
 @class Rounds;
+@class Tee;
 
 @interface Courses : NSManagedObject
 
@@ -17,6 +19,6 @@
 @property (nonatomic, retain) NSNumber * courseSlope;
 @property (nonatomic, retain) NSNumber * courseRating;
 @property (nonatomic, retain) Rounds *rounds;
-@property (nonatomic, retain) NSManagedObject *tees;
+@property (nonatomic, retain) Tee * tees;
 
 @end

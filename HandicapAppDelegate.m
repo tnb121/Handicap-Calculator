@@ -23,12 +23,14 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
-	UINavigationController *navigationController = [[tabBarController viewControllers] objectAtIndex:0];
-	HomeScreenViewController *controller = [[navigationController viewControllers] objectAtIndex:0];
-	controller.managedObjectContext = self.managedObjectContext;
+	//UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
+	//UINavigationController *navigationController = [[tabBarController viewControllers] objectAtIndex:0];
+	//HomeScreenViewController *controller = [[navigationController viewControllers] objectAtIndex:0];
+	//controller.managedObjectContext = self.managedObjectContext;
+	UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
+    [tabController setSelectedIndex:0];
 
-	return YES;
+    return YES;	return YES;
 }
 
 - (void)applicationWillResignActive:(UIApplication *)application

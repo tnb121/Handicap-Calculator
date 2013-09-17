@@ -8,8 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import "Handicap.h"
+#import "KeyboardController.h"
 
-@interface GroupCourseHandicapViewController : UIViewController
+@interface GroupCourseHandicapViewController : UIViewController<KeyboardControllerDelegate>
+
 @property (strong, nonatomic) IBOutlet UITextField *player2HandicapValue;
 @property (strong, nonatomic) IBOutlet UITextField *player3HandicapValue;
 @property (strong, nonatomic) IBOutlet UITextField *player4HandicapValue;

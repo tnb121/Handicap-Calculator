@@ -15,11 +15,11 @@
     </entity>
     <entity name="Tee" representedClassName="Tee" syncable="YES">
         <attribute name="teeColor" optional="YES" attributeType="String" syncable="YES"/>
-        <relationship name="teeTocourses" toMany="YES" minCount="1" deletionRule="Cascade" destinationEntity="Courses" inverseName="tees" inverseEntity="Courses" syncable="YES"/>
+        <relationship name="teeTocourses" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Courses" inverseName="tees" inverseEntity="Courses" syncable="YES"/>
     </entity>
     <elements>
         <element name="Courses" positionX="144" positionY="-702" width="128" height="118"/>
-        <element name="Rounds" positionX="-144" positionY="-690" width="128" height="105"/>
-        <element name="Tee" positionX="403" positionY="-657" width="128" height="75"/>
+        <element name="Rounds" positionX="-144" positionY="-690" width="128" height="103"/>
+        <element name="Tee" positionX="403" positionY="-657" width="128" height="73"/>
     </elements>
 </model>

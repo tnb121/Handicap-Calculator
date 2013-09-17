@@ -18,6 +18,7 @@
 
 @interface HandicapViewController ()
 @property (nonatomic, strong) Differential *diff;
+@property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @end
 
 @implementation HandicapViewController
@@ -37,6 +38,9 @@
 @synthesize dateValue=_dateValue;
 @synthesize courseNameValue=_courseNameValue;
 @synthesize teeValue=_teeValue;
+
+
+
 
 -(Differential*) diff
 
@@ -74,7 +78,7 @@
 	NSString *teeColor = [NSString stringWithFormat:@"%@", _teeValue.text];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"yyyy-MM-dd"];
+	[formatter setDateFormat:@"MM-dd-yyyy"];
 	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:10]];
 
 	NSNumber *differential = [[NSNumber alloc] initWithDouble:[self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]]];
@@ -101,11 +105,11 @@
 
 	Tee	* tee = [NSEntityDescription insertNewObjectForEntityForName:@"Tee" inManagedObjectContext:context];
 	[tee setValue:teeColor forKey:@"teeColor"];
-
 	courses.tees = tee;
 
 	NSError *error;
 	[context save:&error];
+
 
 }
 
@@ -123,12 +127,7 @@
 	[alert show];
 
 	[self AddRound];
-	
-}
-
--(IBAction)dismissKeyboard:(id)sender
-{
-	[sender resignFirstResponder];
+	[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
 }
 
 
@@ -146,7 +145,7 @@
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 
-	if ([[segue identifier] isEqualToString:@"SaveRoundSegue"])
+	if ([[segue identifier] isEqualToString:@"SavetoHomeSegue"])
 	{
 		[self prepareForSaveRoundSegue:segue sender:sender];
 		return;
@@ -165,30 +164,34 @@
 			_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
 		}
 
-		HomeScreenViewController* vc = [segue destinationViewController];
-		vc.managedObjectContext = self.managedObjectContext;
+	//HomeScreenViewController* vc = [segue destinationViewController];
+	//vc.managedObjectContext = self.managedObjectContext;
 
 }
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view, typically from a nib.
+	self.enhancedKeyboard = [[KeyboardController alloc] init];
+	self.enhancedKeyboard.delegate=self;
 }
 
 - (void)viewDidUnload
 {
  
     [super viewDidUnload];
+	[self clearTextFields];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
+	[self.courseNameValue becomeFirstResponder];
 }
 
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+	
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -201,24 +204,33 @@
 	[super viewDidDisappear:animated];
 }
 
+-(void)clearTextFields
+{
+	_ratingValue.text=nil;
+	_scoreValue.text=nil;
+	_slopeValue.text=nil;
+	_courseNameValue.text=nil;
+	_teeValue.text=nil;
+	_dateValue.text=nil;
+	[self.courseNameValue becomeFirstResponder];
+}
+
 - (IBAction)showDatePicker:(id)sender
 {
 	UIDatePicker *datePicker = [[UIDatePicker alloc]init];
 	datePicker.datePickerMode = UIDatePickerModeDate;
+	datePicker.maximumDate=[NSDate date];
 
 	
 	[datePicker setDate:[NSDate date]];
-	 [datePicker addTarget:self action:@selector(updateTextField:) forControlEvents:UIControlEventValueChanged];
-	 [self.dateValue setInputView:datePicker];
-
-	
+	[datePicker addTarget:self action:@selector(updateTextField:) forControlEvents:UIControlEventValueChanged];
+	[self.dateValue setInputView:datePicker];
 
 	UIDatePicker *picker = (UIDatePicker*)self.dateValue.inputView;
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"yyyy-MM-dd"];
-	NSDate *date = [formatter dateFromString:[[NSString stringWithFormat:@"%@",picker.date] substringToIndex:10]];
-	NSString * dateInput = [NSString stringWithFormat:@"%@",date];
+	[formatter setDateFormat:@"MM-dd-yyyy"];
+	NSString* dateInput=[formatter stringFromDate:picker.date];
 	self.dateValue.text = dateInput;
 
 }
@@ -227,11 +239,9 @@
 	UIDatePicker *picker = (UIDatePicker*)self.dateValue.inputView;
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"yyyy-MM-dd"];
-	NSDate *date = [formatter dateFromString:[[NSString stringWithFormat:@"%@",picker.date] substringToIndex:10]];
-	NSString * dateInput = [NSString stringWithFormat:@"%@",date];
+	[formatter setDateFormat:@"MM-dd-yyyy"];
+	NSString* dateInput=[formatter stringFromDate:picker.date];
 	self.dateValue.text = dateInput;
-
 }
 
 -(IBAction)showTeePicker:(id)sender
@@ -240,6 +250,7 @@
 	teePicker.delegate =self;
 	teePicker.showsSelectionIndicator = YES;
 	[self.teeValue setInputView:teePicker];
+
 
 	// initialize the Array of tee colors
 	_teeColors= [[NSMutableArray alloc] init];
@@ -250,6 +261,8 @@
 	[_teeColors addObject:@"Red"];
 	[_teeColors addObject:@"White"];
 	[_teeColors addObject:@"Other"];
+
+	_teeValue.text = [_teeColors objectAtIndex:0];
 
 }
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
@@ -273,6 +286,60 @@
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
     _teeValue.text=[_teeColors objectAtIndex:row];
+}
+
+
+
+- (IBAction) dismissKeyboard:(id)sender
+{
+	[_courseNameValue resignFirstResponder];
+	[_teeValue resignFirstResponder];
+	[_dateValue resignFirstResponder];
+	[_slopeValue resignFirstResponder];
+	[_scoreValue resignFirstResponder];
+}
+- (IBAction)toolbarSetup:(id)sender
+{
+    [sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:YES NextEnabled:YES DoneEnabled:YES]];
+}
+
+
+- (void)nextDidTouchDown
+{
+	if (_courseNameValue.isFirstResponder)
+		[self.teeValue becomeFirstResponder];
+	else if (_teeValue.isFirstResponder)
+		[self.dateValue becomeFirstResponder];
+	else if (_dateValue.isFirstResponder)
+		[self.ratingValue becomeFirstResponder];
+	else if (_ratingValue.isFirstResponder)
+		[self.slopeValue becomeFirstResponder];
+	else if(_slopeValue.isFirstResponder)
+		[self.scoreValue becomeFirstResponder];
+	else if (_scoreValue.isFirstResponder)
+		[self.courseNameValue becomeFirstResponder];
+}
+
+- (void)previousDidTouchDown
+{
+	if (_courseNameValue.isFirstResponder)
+		[self.courseNameValue becomeFirstResponder];
+	else if (_teeValue.isFirstResponder)
+		[self.courseNameValue becomeFirstResponder];
+	else if (_dateValue.isFirstResponder)
+		[self.teeValue becomeFirstResponder];
+	else if (_ratingValue.isFirstResponder)
+		[self.dateValue becomeFirstResponder];
+	else if (_slopeValue.isFirstResponder)
+		[self.ratingValue becomeFirstResponder];
+	else if (_scoreValue.isFirstResponder)
+		[self.slopeValue becomeFirstResponder];
+	
+}
+
+- (void)doneDidTouchDown
+{
+	[self dismissKeyboard:self];
 }
 
 

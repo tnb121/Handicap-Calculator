@@ -9,7 +9,7 @@
 #import "GroupCourseHandicapViewController.h"
 
 @interface GroupCourseHandicapViewController ()
-
+@property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @end
 
 @implementation GroupCourseHandicapViewController
@@ -73,7 +73,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	// Do any additional setup after loading the view.
+	
+	self.enhancedKeyboard = [[KeyboardController alloc] init];
+	self.enhancedKeyboard.delegate = self;
+}
+
+-(void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self.groupCourseSlope becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
@@ -81,5 +89,56 @@
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
 }
+
+- (IBAction) dismissKeyboard:(id)sender
+{
+	[_player2HandicapValue resignFirstResponder];
+	[_player3HandicapValue resignFirstResponder];
+	[_player4HandicapValue resignFirstResponder];
+	[_groupCourseSlope resignFirstResponder];
+}
+- (IBAction)toolbarSetup:(id)sender
+{
+    [sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:YES NextEnabled:YES DoneEnabled:YES]];
+}
+
+/*
+ @property (strong, nonatomic) IBOutlet UITextField *player2HandicapValue;
+ @property (strong, nonatomic) IBOutlet UITextField *player3HandicapValue;
+ @property (strong, nonatomic) IBOutlet UITextField *player4HandicapValue;
+ @property (strong, nonatomic) IBOutlet UITextField *groupCourseSlope;
+ */
+
+- (void)nextDidTouchDown
+{
+	if (_groupCourseSlope.isFirstResponder)
+		[self.player2HandicapValue becomeFirstResponder];
+	else if (_player2HandicapValue.isFirstResponder)
+		[self.player3HandicapValue becomeFirstResponder];
+	else if (_player3HandicapValue.isFirstResponder)
+		[self.player4HandicapValue becomeFirstResponder];
+	else if (_player4HandicapValue.isFirstResponder)
+		[self.groupCourseSlope becomeFirstResponder];
+}
+
+- (void)previousDidTouchDown
+{
+	if (_groupCourseSlope.isFirstResponder)
+		[self.groupCourseSlope becomeFirstResponder];
+	else if (_player2HandicapValue.isFirstResponder)
+		[self.groupCourseSlope becomeFirstResponder];
+	else if (_player3HandicapValue.isFirstResponder)
+		[self.player2HandicapValue becomeFirstResponder];
+	else if (_player4HandicapValue.isFirstResponder)
+		[self.player3HandicapValue becomeFirstResponder];
+}
+
+- (void)doneDidTouchDown
+{
+	[self dismissKeyboard:self];
+	[self calculateGroupCourseHandicap:self];
+}
+
+
 
 @end
