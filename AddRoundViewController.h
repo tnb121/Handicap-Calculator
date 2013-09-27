@@ -24,12 +24,14 @@
 @property (strong,nonatomic)IBOutlet UITextField *dateValue;
 @property (strong,nonatomic)IBOutlet UITextField *courseNameValue;
 @property (strong,nonatomic)IBOutlet UITextField * teeValue;
+@property (strong, nonatomic) IBOutlet UIButton *saveRoundButton;
+
+@property (strong, nonatomic) IBOutlet UILabel *testDataEntry;
 
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;
 -(IBAction)dismissKeyboard:(id)sender;
 -(IBAction)showTeePicker:(id)sender;
-
 
 
 -(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext;

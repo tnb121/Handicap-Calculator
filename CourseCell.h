@@ -9,6 +9,7 @@
 #import <UIKit/UIKit.h>
 
 @interface CourseCell : UITableViewCell
+
 @property (strong, nonatomic) IBOutlet UILabel *courseNameLabel;
 @property (strong, nonatomic) IBOutlet UILabel *CourseSlopeLabel;
 @property (strong, nonatomic) IBOutlet UILabel *courseHCapLabel;

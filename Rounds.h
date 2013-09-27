@@ -21,6 +21,6 @@
 
 @property (nonatomic,retain) NSManagedObjectContext * managedObjectContext;
 
-+(NSNumber *)aggregateOperation:(NSString *)function onAttribute:(NSString *)attributeName withPredicate:(NSPredicate *)predicate inManagedObjectContext:(NSManagedObjectContext *)context;
+
 
 @end

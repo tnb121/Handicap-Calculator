@@ -32,8 +32,11 @@
 	NSEntityDescription *entityDescription = [NSEntityDescription
 											  entityForName:@"Rounds" inManagedObjectContext:moc];
 	NSFetchRequest *request = [[NSFetchRequest alloc] init];
+	NSSortDescriptor *sortbyDate=[NSSortDescriptor sortDescriptorWithKey:@"roundDate" ascending:YES];
+	NSArray *sortDescriptors = @[sortbyDate];
 	[request setEntity:entityDescription];
 	[request setFetchLimit:20];
+	[request setSortDescriptors:sortDescriptors];
 
 	NSError *error;
 
@@ -43,12 +46,16 @@
 		// Deal with error...
 	}
 
-	NSSortDescriptor *sort=[NSSortDescriptor sortDescriptorWithKey:@"roundDate" ascending:YES];
-	[array sortUsingDescriptors:[NSArray arrayWithObject:sort]];
+NSLog(@"array: %@",array);
 
-	NSLog(@"array: %@", array);
+	NSSortDescriptor *sortByDiff=[NSSortDescriptor sortDescriptorWithKey:@"roundDifferential" ascending:NO];
+	NSArray * sortDescriptorsByDiff = @[sortByDiff];
+	NSArray* immutableArrayByDiff =[array sortedArrayUsingDescriptors:sortDescriptorsByDiff];
+	NSMutableArray * mutableArrayByDiff = [NSMutableArray arrayWithArray:immutableArrayByDiff];
 
-	return array;
+	NSLog(@"array: %@",mutableArrayByDiff);
+
+	return mutableArrayByDiff;
 }
 
 -(NSString*)roundCountCalculation
@@ -68,6 +75,11 @@
 -(NSString*)scoringAverageCalculation
 {
 	NSArray* roundScoringArray = [self fetchRoundResults];
+	NSLog(@"array: %@", roundScoringArray);
+	NSSortDescriptor *sortByDiffs = [NSSortDescriptor sortDescriptorWithKey:@"roundDifferential" ascending:YES];
+	[roundScoringArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortByDiffs]];
+NSLog(@"array: %@", roundScoringArray);
+
 	NSNumber*scoringAverage= [roundScoringArray valueForKeyPath:@"@avg.roundScore"];
 	_scoringAverageCalc = [scoringAverage doubleValue];
 	if(!_scoringAverageCalc) return @"N/A";
@@ -94,15 +106,26 @@
 	return _differentialSum;
 }
 
--(NSString*)handicapCalculation
+-(double)handicapCalculation
 {
 	_roundCountForHandicap=[self CalculateHCapRounds:(double) [[self roundCountCalculation] doubleValue]];
 
-	_handicapValue = [self calculateDifferentialSum] / _roundCountForHandicap * 0.96*10;
-	_handicapValueRounded = (floorf(_handicapValue))/10;
-	NSString* handicapString = [NSString stringWithFormat:@"%.1f", _handicapValueRounded];
-	if([handicapString isEqual:@"0.0"]) handicapString = @"N/A";
-	return handicapString;
+	double handicapValue = [self calculateDifferentialSum] / _roundCountForHandicap * 0.96*10;
+	double handicapValueRounded = (floorf(handicapValue))/10;
+	return handicapValueRounded;
+
+}
+
+-(NSString*)handicapCalculationString
+{
+	NSString* handicapString = [NSString stringWithFormat:@"%.1f",self.handicapCalculation];
+	NSString* handicapStringNegative = [NSString stringWithFormat:@"%.1f",-(self.handicapCalculation)];
+	if([[self roundCountCalculation]integerValue]<5)
+		return @" - ";
+	else if (self.handicapCalculation <0)
+		return [@"+"stringByAppendingString:handicapStringNegative];
+	else
+		return handicapString;
 }
 
 -(double) CalculateHCapRounds:(double) rounds

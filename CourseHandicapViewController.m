@@ -15,6 +15,7 @@
 @implementation CourseHandicapViewController
 
 @synthesize fetchedResultsController=_fetchedResultsController;
+@synthesize courseData=_courseData;
 
 @synthesize managedObjectContext=_managedObjectContext;
 
@@ -23,6 +24,7 @@
 @synthesize courseHandicapSlopeValue=_courseHandicapSlopeValue;
 
 @synthesize hCapClass=_hCapClass;
+@synthesize coursesClass=_coursesClass;
 
 
 -(Handicap*)hCapClass
@@ -30,6 +32,14 @@
 	if(!_hCapClass) _hCapClass = [[Handicap alloc] init];
 	return _hCapClass;
 }
+
+-(Courses*)coursesClass
+{
+	if(!_coursesClass) _coursesClass=[[Courses alloc] init];
+	return _coursesClass;
+}
+
+
 - (NSFetchedResultsController *)fetchedResultsController
 {
 	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
@@ -45,6 +55,7 @@
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 
     fetchRequest.entity = [NSEntityDescription entityForName:@"Courses" inManagedObjectContext:self.managedObjectContext];
+
 	[fetchRequest setReturnsDistinctResults:YES];
 
 	// Set the sort descriptor
@@ -105,18 +116,28 @@
 	[courseRatingLabel setText:RatingLabelText];
 
 	UILabel *courseHCapLabel = (UILabel *)[cell.contentView viewWithTag:130];
-	double courseHCap = [[self.hCapClass handicapCalculation]doubleValue] * [courses.courseSlope intValue]/113;
-	NSString * courseHCapLabelText = [NSString stringWithFormat:@"%f",courseHCap];
+	double courseHCap = [self.hCapClass handicapCalculation] * [courses.courseSlope intValue]/113;
+	NSString * courseHCapLabelText = [NSString stringWithFormat:@"%.1f",courseHCap];
     [courseHCapLabel setText:courseHCapLabelText];
 
     return cell;
 }
 
+- (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
+{
+	return 1;
 
+}
+
+- (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
+{
+	int c =[self.fetchedResultsController.fetchedObjects count];
+	return c;
+}
 - (IBAction)calculateCourseHandicap:(id)sender
 {
 
-	double myHandicap = [[self.hCapClass handicapCalculation]doubleValue];
+	double myHandicap = [self.hCapClass handicapCalculation];
 	double courseSlope =[_courseHandicapSlopeValue.text doubleValue];
 	double courseHCap= myHandicap * courseSlope / 113;
 
@@ -131,7 +152,8 @@
 
 	[super viewWillAppear:animated];
 
-		_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculation];
+		_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculationString];
+		[_courseData reloadData];
 }
 
 
@@ -153,6 +175,8 @@
 	_courseHandicapLabel.text= @"-";
 	self.enhancedKeyboard = [[KeyboardController alloc] init];
 	self.enhancedKeyboard.delegate = self;
+	self.courseData.delegate=self;
+	self.courseData.dataSource=self;
 }
 
 - (void)didReceiveMemoryWarning
@@ -173,7 +197,7 @@
 {
 	[self.courseHandicapSlopeValue resignFirstResponder];
 
-	double myHandicap = [[self.hCapClass handicapCalculation]doubleValue];
+	double myHandicap = [self.hCapClass handicapCalculation];
 	double courseSlope =[_courseHandicapSlopeValue.text doubleValue];
 	double courseHCap= myHandicap * courseSlope / 113;
 
@@ -191,5 +215,7 @@
 {
 
 }
+
+
 
 @end

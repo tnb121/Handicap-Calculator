@@ -13,11 +13,13 @@
 #import "Rounds.h"
 #import "Tee.h"
 #import "Courses.h"
+#import "HandicapHistory.h"
 
 
 
 @interface HandicapViewController ()
 @property (nonatomic, strong) Differential *diff;
+@property (nonatomic,strong)Handicap * hCapClass;
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @end
 
@@ -25,6 +27,7 @@
 
 @synthesize mymessage;
 @synthesize diff = _diff;
+@synthesize hCapClass=_hCapClass;
 @synthesize teeColors=_teeColors;
 
 @synthesize fetchedResultsController = _fetchedResultsController;
@@ -38,8 +41,9 @@
 @synthesize dateValue=_dateValue;
 @synthesize courseNameValue=_courseNameValue;
 @synthesize teeValue=_teeValue;
+@synthesize saveRoundButton=_saveRoundButton;
 
-
+@synthesize testDataEntry=_testDataEntry;
 
 
 -(Differential*) diff
@@ -49,24 +53,97 @@
 	return _diff;
 }
 
-
--(double) RoundRatingFromTextInput
+-(Handicap*)hCapClass
 {
-	NSInteger rating = [_ratingValue.text integerValue];
-	return rating;
+	if(!_hCapClass) _hCapClass = [[Handicap alloc] init];
+	return _hCapClass;
 }
 
--(double) RoundSlopeFromTextInput
+-(BOOL) RoundRatingCheck
 {
-	NSInteger slope = [_slopeValue.text integerValue];
-	return slope;
+	double rating = [_ratingValue.text doubleValue];
+
+	if(rating>=65 && rating<=85)
+		return YES;
+	else
+		return NO;
 }
 
--(double) RoundScoreFromTextInput
+-(BOOL) RoundSlopeCheck
 {
-	NSInteger score = [_scoreValue.text integerValue];
-	return score;
+	double slope = [_slopeValue.text doubleValue];
+
+	if(slope>=55 && slope<=155)
+		return YES;
+	else
+		return NO;
 }
+
+-(BOOL) RoundScoreCheck
+{
+	double score = [_scoreValue.text doubleValue];
+
+	if(score>=56 && score<=500)
+		return YES;
+	else
+		return NO;
+}
+
+-(BOOL) RoundCourseNameCheck
+{
+	NSString * courseText = _courseNameValue.text;
+
+	if([courseText  isEqualToString:@""])
+		return NO;
+	else
+		return YES;
+}
+
+-(BOOL) RoundTeeNameCheck
+{
+	NSString * teeText = _teeValue.text;
+
+	if([teeText isEqualToString:@""])
+		return NO;
+	else
+		return YES;
+}
+
+-(BOOL) RoundDateCheck
+{
+	NSString * dateText = _dateValue.text;
+	if([dateText isEqualToString:@""])
+		return NO;
+	else
+		return YES;
+}
+-(BOOL)roundDataEntryComplete
+{
+	if ([self RoundCourseNameCheck] == YES && [self RoundTeeNameCheck] == YES && [self RoundDateCheck] == YES && [self RoundRatingCheck] == YES && [self RoundSlopeCheck] == YES && [self RoundScoreCheck]== YES )
+	{
+		self.saveRoundButton.enabled=YES;
+		return YES;
+	}
+	else
+	{
+		self.saveRoundButton.enabled=NO;
+		return NO;
+	}
+	}
+
+
+- (IBAction)testDataEntry:(id)sender
+{
+
+if([self roundDataEntryComplete] == YES)
+	_testDataEntry.text = @"YES";
+else
+	_testDataEntry.text =@"NO";
+
+[self.view setNeedsDisplay];
+}
+
+
 
 -(void)AddRound
 {
@@ -81,12 +158,13 @@
 	[formatter setDateFormat:@"MM-dd-yyyy"];
 	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:10]];
 
-	NSNumber *differential = [[NSNumber alloc] initWithDouble:[self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]]];
+	NSNumber *differential = [[NSNumber alloc] initWithDouble:[self.diff CalculateDifferential:[_ratingValue.text integerValue] withslope:[_slopeValue.text integerValue] withscore:[_scoreValue.text integerValue]]];
 
-	
 
 	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
 	NSManagedObjectContext* context = [appDelegate managedObjectContext];
+
+	
 
 		NSEntityDescription *roundsEntity = [NSEntityDescription entityForName:@"Rounds" inManagedObjectContext:context];
 	NSFetchRequest *request =[[NSFetchRequest alloc]init];
@@ -107,18 +185,31 @@
 	[tee setValue:teeColor forKey:@"teeColor"];
 	courses.tees = tee;
 
+	if ([[self.hCapClass roundCountCalculation] intValue] < 5)
+		return;
+	else
+
+	{
+		HandicapHistory * history = [NSEntityDescription insertNewObjectForEntityForName:@"HandicapHistory" inManagedObjectContext:context];
+		[history setValue:[NSDate date] forKey:@"historyDate"];
+		[history setValue:[NSNumber numberWithDouble:[self.hCapClass handicapCalculation]]  forKey:@"historyHCap"];
+	}
+
 	NSError *error;
 	[context save:&error];
-
-
 }
-
 
 - (IBAction)CalculateDifferentialAction:(id)sender
 {
 
-	mymessage =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[self RoundRatingFromTextInput] withslope:[self RoundSlopeFromTextInput] withscore:[self RoundScoreFromTextInput]]];
+	NSString *mymessage1 =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[_ratingValue.text integerValue] withslope:[_slopeValue.text integerValue] withscore:[_scoreValue.text integerValue]]];
 
+	NSString * mymessage2 = @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
+
+	if([[self.hCapClass roundCountCalculation]integerValue]+1 <5)
+		mymessage=mymessage2;
+	else
+		mymessage=mymessage1;
 
 	// open an alert with just an OK button
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
@@ -134,8 +225,7 @@
 -(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext
 	{
 		NSError *error=nil;
-		// **** log objects currently in database ****
-		// create fetch object, this object fetch's the objects out of the database
+
 		NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 		NSEntityDescription *entity = [NSEntityDescription entityForName: tableName inManagedObjectContext:manageObjContext];
 		[fetchRequest setEntity:entity];
@@ -164,8 +254,6 @@
 			_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
 		}
 
-	//HomeScreenViewController* vc = [segue destinationViewController];
-	//vc.managedObjectContext = self.managedObjectContext;
 
 }
 - (void)viewDidLoad
@@ -179,13 +267,14 @@
 {
  
     [super viewDidUnload];
-	[self clearTextFields];
+
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
 	[self.courseNameValue becomeFirstResponder];
+	self.saveRoundButton.enabled = NO;
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -204,16 +293,6 @@
 	[super viewDidDisappear:animated];
 }
 
--(void)clearTextFields
-{
-	_ratingValue.text=nil;
-	_scoreValue.text=nil;
-	_slopeValue.text=nil;
-	_courseNameValue.text=nil;
-	_teeValue.text=nil;
-	_dateValue.text=nil;
-	[self.courseNameValue becomeFirstResponder];
-}
 
 - (IBAction)showDatePicker:(id)sender
 {

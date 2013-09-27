@@ -34,7 +34,7 @@
 - (IBAction)calculateGroupCourseHandicap:(id)sender
 {
 
-	double myHandicap = [[self.hCapClass handicapCalculation]doubleValue];
+	double myHandicap = [self.hCapClass handicapCalculation];
 	double player2Handicap = [_player2HandicapValue.text doubleValue];
 	double player3Handicap = [_player3HandicapValue.text doubleValue];
 	double player4Handicap = [_player4HandicapValue.text doubleValue];

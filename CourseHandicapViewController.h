@@ -13,6 +13,7 @@
 #import "Handicap.h"
 #import "Courses.h"
 #import "Tee.h"
+#import "CourseCell.h"
 
 @interface CourseHandicapViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,NSFetchedResultsControllerDelegate,KeyboardControllerDelegate>
 
@@ -23,6 +24,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapLabel;
 
 @property (strong,nonatomic) Handicap * hCapClass;
+@property (strong,nonatomic) Courses * coursesClass;
 
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (strong,nonatomic) NSManagedObjectContext* managedObjectContext;

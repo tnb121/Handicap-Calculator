@@ -1,11 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model name="" userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="2061" systemVersion="12E55" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="3396" systemVersion="12F37" minimumToolsVersion="Xcode 4.3" macOSVersion="Automatic" iOSVersion="Automatic">
     <entity name="Courses" representedClassName="Courses" syncable="YES">
         <attribute name="courseName" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="courseRating" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <attribute name="courseSlope" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
         <relationship name="rounds" optional="YES" toMany="YES" deletionRule="Cascade" destinationEntity="Rounds" inverseName="courses" inverseEntity="Rounds" syncable="YES"/>
         <relationship name="tees" optional="YES" maxCount="1" deletionRule="Cascade" destinationEntity="Tee" inverseName="teeTocourses" inverseEntity="Tee" syncable="YES"/>
+    </entity>
+    <entity name="HandicapHistory" representedClassName="HandicapHistory" syncable="YES">
+        <attribute name="historyDate" optional="YES" attributeType="Date" syncable="YES"/>
+        <attribute name="historyHCap" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
     </entity>
     <entity name="Rounds" representedClassName="Rounds" syncable="YES">
         <attribute name="roundDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -18,8 +22,9 @@
         <relationship name="teeTocourses" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Courses" inverseName="tees" inverseEntity="Courses" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Courses" positionX="144" positionY="-702" width="128" height="118"/>
+        <element name="Courses" positionX="72" positionY="-693" width="128" height="118"/>
         <element name="Rounds" positionX="-144" positionY="-690" width="128" height="103"/>
-        <element name="Tee" positionX="403" positionY="-657" width="128" height="73"/>
+        <element name="Tee" positionX="241" positionY="-675" width="128" height="73"/>
+        <element name="HandicapHistory" positionX="-144" positionY="-549" width="128" height="73"/>
     </elements>
 </model>

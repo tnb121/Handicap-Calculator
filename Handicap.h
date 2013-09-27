@@ -32,5 +32,6 @@
 -(double)calculateCourseHandicap:(double)slope withPlayerHandicap:(double) playerHandicap;
 -(NSString*)roundCountCalculation;
 -(NSString*)scoringAverageCalculation;
--(NSString*)handicapCalculation;
+-(double)handicapCalculation;
+-(NSString*)handicapCalculationString;
 @end
