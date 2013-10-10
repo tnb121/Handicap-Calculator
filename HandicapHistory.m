@@ -13,5 +13,7 @@
 
 @dynamic historyDate;
 @dynamic historyHCap;
+@dynamic historyScoringAverage;
+@dynamic historyRoundCount;
 
 @end

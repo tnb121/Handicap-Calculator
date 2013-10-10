@@ -16,15 +16,24 @@
 @implementation HandicapHistoryViewController
 
 @synthesize handicapHistoryTableView;
-@synthesize historyClass=_historyClass;
+@synthesize HcapHistoryCellClass=_HcapHistoryCellClass;
+@synthesize hCapClass=_hCapClass;
 
-@synthesize fetchedResultsController=_fetchedResultsController;
+
+@synthesize HistoryfetchedResultsController=_HistoryfetchedResultsController;
 @synthesize managedObjectContext=_managedObjectContext;
 
--(HandicapHistory*)historyClass
+-(HandicapHistoryCell*)HcapHistoryCellClass
 {
-	if(!_historyClass) _historyClass = [[HandicapHistory alloc] init];
-	return _historyClass;
+	if(!_HcapHistoryCellClass) _HcapHistoryCellClass = [[HandicapHistoryCell alloc] init];
+	return _HcapHistoryCellClass;
+}
+
+-(Handicap*)hCapClass
+{
+	if(!_hCapClass)_hCapClass = [[Handicap alloc] init];
+	return _hCapClass;
+
 }
 
 - (NSFetchedResultsController *)fetchedResultsController
@@ -33,17 +42,15 @@
 	NSManagedObjectContext* context = [appDelegate managedObjectContext];
 	self.managedObjectContext=context;
 
-	if (_fetchedResultsController != nil)
+	if (_HistoryfetchedResultsController != nil)
 	{
-        return _fetchedResultsController;
+        return _HistoryfetchedResultsController;
     }
-
+	
     // Create the fetch request for the entity.
     NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
 
     fetchRequest.entity = [NSEntityDescription entityForName:@"HandicapHistory" inManagedObjectContext:self.managedObjectContext];
-
-	[fetchRequest setReturnsDistinctResults:NO];
 
 	// Set the sort descriptor
 	NSSortDescriptor *  date = [[NSSortDescriptor alloc] initWithKey: @"historyDate"
@@ -60,7 +67,7 @@
                                                              sectionNameKeyPath: nil
                                                              cacheName: nil];
     aFetchedResultsController.delegate = self;
-    self.fetchedResultsController = aFetchedResultsController;
+    self.HistoryfetchedResultsController = aFetchedResultsController;
 
 	// handle errors
 	NSError *error = nil;
@@ -69,8 +76,8 @@
 	    NSLog(@"Unresolved error %@, %@", error, [error userInfo]);
 	    abort();
 	}
-	NSLog(@"fetched: %@",_fetchedResultsController);
-    return _fetchedResultsController;
+	NSLog(@"fetched: %@",_HistoryfetchedResultsController);
+    return _HistoryfetchedResultsController;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -96,11 +103,22 @@
 	NSString *dateString = [dateFormatter stringFromDate:historyDate];
 	[historyDateLabel setText:dateString];
 
+
 	UILabel *historyHCapLabel = (UILabel *)[cell.contentView viewWithTag:320];
-	NSString * historyHCapString = [NSString stringWithFormat:@"%@",history.historyHCap];
+	NSString * historyHCapString = [NSString stringWithFormat:@"%.1f",[history.historyHCap doubleValue]];
     [historyHCapLabel setText:historyHCapString];
 
-    return cell;
+
+	UILabel *historyScoringAverageLabel = (UILabel *)[cell.contentView viewWithTag:330];
+	NSString * historyScoringAverageString = [NSString stringWithFormat:@"%.1f",[history.historyScoringAverage doubleValue]];
+    [historyScoringAverageLabel setText:historyScoringAverageString];
+
+
+	UILabel *historyRoundCountLabel = (UILabel *)[cell.contentView viewWithTag:340];
+	NSString * historyRoundCountString = [NSString stringWithFormat:@"%ld",(long)[history.historyRoundCount integerValue]];
+    [historyRoundCountLabel setText:historyRoundCountString];
+
+	return cell;
 }
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
@@ -111,8 +129,8 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	int c =[self.fetchedResultsController.fetchedObjects count];
-	return c;
+	int fetchCount=[self.fetchedResultsController.fetchedObjects count];
+	return fetchCount;
 }
 -(NSMutableArray*) fetchHistoryResults
 {
@@ -158,8 +176,18 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	self.handicapHistoryTableView.delegate=self;
-	self.handicapHistoryTableView.dataSource=self;
+
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+	[super viewDidDisappear:animated];
+	self.HistoryfetchedResultsController = nil;
+}
+
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
 }
 
 - (void)didReceiveMemoryWarning
@@ -175,8 +203,8 @@
 
 -(void)viewWillAppear:(BOOL)animated
 {
+	[handicapHistoryTableView reloadData];
 	[super viewWillAppear:animated];
-	[self.handicapHistoryTableView reloadData];
 
 }
 

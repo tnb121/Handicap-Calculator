@@ -10,6 +10,8 @@
     <entity name="HandicapHistory" representedClassName="HandicapHistory" syncable="YES">
         <attribute name="historyDate" optional="YES" attributeType="Date" syncable="YES"/>
         <attribute name="historyHCap" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="historyRoundCount" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="historyScoringAverage" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
     </entity>
     <entity name="Rounds" representedClassName="Rounds" syncable="YES">
         <attribute name="roundDate" optional="YES" attributeType="Date" syncable="YES"/>
@@ -22,9 +24,9 @@
         <relationship name="teeTocourses" minCount="1" maxCount="1" deletionRule="Cascade" destinationEntity="Courses" inverseName="tees" inverseEntity="Courses" syncable="YES"/>
     </entity>
     <elements>
-        <element name="Courses" positionX="72" positionY="-693" width="128" height="118"/>
-        <element name="Rounds" positionX="-144" positionY="-690" width="128" height="103"/>
-        <element name="Tee" positionX="241" positionY="-675" width="128" height="73"/>
-        <element name="HandicapHistory" positionX="-144" positionY="-549" width="128" height="73"/>
+        <element name="Courses" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="HandicapHistory" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Rounds" positionX="0" positionY="0" width="0" height="0"/>
+        <element name="Tee" positionX="0" positionY="0" width="0" height="0"/>
     </elements>
 </model>

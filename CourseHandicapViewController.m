@@ -14,7 +14,7 @@
 
 @implementation CourseHandicapViewController
 
-@synthesize fetchedResultsController=_fetchedResultsController;
+@synthesize CoursefetchedResultsController=_CoursefetchedResultsController;
 @synthesize courseData=_courseData;
 
 @synthesize managedObjectContext=_managedObjectContext;
@@ -22,6 +22,7 @@
 @synthesize courseHandicapLabel=_courseHandicapLabel;
 @synthesize courseHandicapMyHandicapLabel=_courseHandicapMyHandicapLabel;
 @synthesize courseHandicapSlopeValue=_courseHandicapSlopeValue;
+@synthesize courseHandicapCalculateButton=_courseHandicapCalculateButton;
 
 @synthesize hCapClass=_hCapClass;
 @synthesize coursesClass=_coursesClass;
@@ -39,6 +40,41 @@
 	return _coursesClass;
 }
 
+-(BOOL) RoundSlopeCheck
+{
+	double slope = [_courseHandicapSlopeValue.text doubleValue];
+
+	if(slope>=55 && slope<=155)
+		return YES;
+	else
+		return NO;
+}
+
+-(BOOL)roundDataEntryComplete
+{
+	if ([self RoundSlopeCheck] == YES)
+	{
+		self.courseHandicapCalculateButton.enabled=YES;
+		self.enhancedKeyboard = [[KeyboardController alloc] init];
+		self.enhancedKeyboard.delegate = self;
+
+		return YES;
+	}
+	else
+	{
+		self.courseHandicapCalculateButton.enabled=NO;
+		return NO;
+	}
+}
+
+- (IBAction)testDataEntry:(id)sender
+{
+	if([self roundDataEntryComplete] == YES)
+		return;
+	else
+		return;
+	[self.view setNeedsDisplay];
+}
 
 - (NSFetchedResultsController *)fetchedResultsController
 {
@@ -46,9 +82,9 @@
 	NSManagedObjectContext* context = [appDelegate managedObjectContext];
 	self.managedObjectContext=context;
 
-	if (_fetchedResultsController != nil)
+	if (_CoursefetchedResultsController != nil)
 	{
-        return _fetchedResultsController;
+        return _CoursefetchedResultsController;
     }
 
     // Create the fetch request for the entity.
@@ -64,8 +100,6 @@
     NSArray *           sortDescriptors = [NSArray arrayWithObjects: date, nil];
     fetchRequest.sortDescriptors = sortDescriptors;
 
-
-
     // Initialize fetched results controller - creates cache
     NSFetchedResultsController *aFetchedResultsController = [[NSFetchedResultsController alloc]
                                                              initWithFetchRequest: fetchRequest
@@ -73,7 +107,7 @@
                                                              sectionNameKeyPath: nil
                                                              cacheName: nil];
     aFetchedResultsController.delegate = self;
-    self.fetchedResultsController = aFetchedResultsController;
+    self.CoursefetchedResultsController = aFetchedResultsController;
 
 	// handle errors
 	NSError *error = nil;
@@ -83,7 +117,7 @@
 	    abort();
 	}
 
-    return _fetchedResultsController;
+    return _CoursefetchedResultsController;
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
@@ -115,10 +149,19 @@
 	NSString* RatingLabelText = [NSString stringWithFormat:@"%d",[courses.courseRating intValue]];
 	[courseRatingLabel setText:RatingLabelText];
 
+
+
 	UILabel *courseHCapLabel = (UILabel *)[cell.contentView viewWithTag:130];
 	double courseHCap = [self.hCapClass handicapCalculation] * [courses.courseSlope intValue]/113;
-	NSString * courseHCapLabelText = [NSString stringWithFormat:@"%.1f",courseHCap];
-    [courseHCapLabel setText:courseHCapLabelText];
+
+
+
+
+	if (courseHCap < 0)
+
+		[courseHCapLabel setText: [@"+" stringByAppendingString:[NSString stringWithFormat:@"%.1f",-(courseHCap)]]];
+	else
+		[courseHCapLabel setText:[NSString stringWithFormat:@"%.1f",courseHCap]];
 
     return cell;
 }
@@ -131,20 +174,12 @@
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	int c =[self.fetchedResultsController.fetchedObjects count];
-	return c;
+	int fetchCount = [self.fetchedResultsController.fetchedObjects count];
+	return fetchCount;
 }
 - (IBAction)calculateCourseHandicap:(id)sender
 {
-
-	double myHandicap = [self.hCapClass handicapCalculation];
-	double courseSlope =[_courseHandicapSlopeValue.text doubleValue];
-	double courseHCap= myHandicap * courseSlope / 113;
-
-	if(courseHCap==0)
-		_courseHandicapLabel.text= @"-";
-	else
-		_courseHandicapLabel.text = [NSString stringWithFormat:@"%.1f",courseHCap];
+	[self SharedCourseHandicapCalculation];
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -153,11 +188,8 @@
 	[super viewWillAppear:animated];
 
 		_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculationString];
-		[_courseData reloadData];
+	[self.courseData reloadData];
 }
-
-
-
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -173,10 +205,20 @@
 {
     [super viewDidLoad];
 	_courseHandicapLabel.text= @"-";
-	self.enhancedKeyboard = [[KeyboardController alloc] init];
-	self.enhancedKeyboard.delegate = self;
+
 	self.courseData.delegate=self;
 	self.courseData.dataSource=self;
+	self.courseHandicapCalculateButton.enabled=NO;
+}
+
+- (void)viewDidDisappear:(BOOL)animated
+{
+	[super viewDidDisappear:animated];
+	self.CoursefetchedResultsController = nil;
+}
+- (void)awakeFromNib
+{
+    [super awakeFromNib];
 }
 
 - (void)didReceiveMemoryWarning
@@ -189,22 +231,11 @@
 {
 	[self.courseHandicapSlopeValue resignFirstResponder];
 }
-- (IBAction)toolbarSetup:(id)sender
-{
- [sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:NO NextEnabled:NO DoneEnabled:YES]];}
 
 - (void)doneDidTouchDown
 {
 	[self.courseHandicapSlopeValue resignFirstResponder];
-
-	double myHandicap = [self.hCapClass handicapCalculation];
-	double courseSlope =[_courseHandicapSlopeValue.text doubleValue];
-	double courseHCap= myHandicap * courseSlope / 113;
-
-	if(courseHCap==0)
-		_courseHandicapLabel.text= @"-";
-	else
-		_courseHandicapLabel.text = [NSString stringWithFormat:@"%.1f",courseHCap];
+	[self SharedCourseHandicapCalculation];
 }
 
 - (void)previousDidTouchDown
@@ -216,6 +247,23 @@
 
 }
 
+-(void)SharedCourseHandicapCalculation
+{
+	double myHandicap = [self.hCapClass handicapCalculation];
+	double courseSlope =[_courseHandicapSlopeValue.text doubleValue];
+	double courseHCap= myHandicap * courseSlope / 113;
+
+	if(courseHCap==0)
+		_courseHandicapLabel.text= @"-";
+	else
+		_courseHandicapLabel.text = [NSString stringWithFormat:@"%.1f",courseHCap];
+}
+
+
+- (IBAction)toolbarSetup:(id)sender
+{
+[sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:YES NextEnabled:YES DoneEnabled:YES]];
+}
 
 
 @end

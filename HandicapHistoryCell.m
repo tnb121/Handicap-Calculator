@@ -12,6 +12,8 @@
 
 @synthesize historyCellDateLabel=_historyCellDateLabel;
 @synthesize historyCellHandicapLabel=_historyCellHandicapLabel;
+@synthesize historyCellRoundLabel=_historyCellRoundLabel;
+@synthesize historyCellScoreAvgLabel=_historyCellScoreAvgLabel;
 
 - (id)initWithStyle:(UITableViewCellStyle)style reuseIdentifier:(NSString *)reuseIdentifier
 {

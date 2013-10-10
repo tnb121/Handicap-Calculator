@@ -14,5 +14,7 @@
 
 @property (nonatomic, retain) NSDate * historyDate;
 @property (nonatomic, retain) NSNumber * historyHCap;
+@property (nonatomic, retain) NSNumber * historyScoringAverage;
+@property (nonatomic, retain) NSNumber * historyRoundCount;
 
 @end

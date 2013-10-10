@@ -22,11 +22,12 @@
 @property (strong, nonatomic) IBOutlet UITextField *courseHandicapSlopeValue;
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapMyHandicapLabel;
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapLabel;
+@property (strong, nonatomic) IBOutlet UIButton *courseHandicapCalculateButton;
 
 @property (strong,nonatomic) Handicap * hCapClass;
 @property (strong,nonatomic) Courses * coursesClass;
 
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) NSFetchedResultsController *CoursefetchedResultsController;
 @property (strong,nonatomic) NSManagedObjectContext* managedObjectContext;
 
 @end

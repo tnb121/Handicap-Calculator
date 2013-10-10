@@ -11,5 +11,7 @@
 @interface HandicapHistoryCell : UITableViewCell
 @property (strong, nonatomic) IBOutlet UILabel *historyCellDateLabel;
 @property (strong, nonatomic) IBOutlet UILabel *historyCellHandicapLabel;
+@property (strong, nonatomic) IBOutlet UILabel *historyCellRoundLabel;
+@property (strong, nonatomic) IBOutlet UILabel *historyCellScoreAvgLabel;
 
 @end

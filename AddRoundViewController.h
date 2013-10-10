@@ -26,23 +26,15 @@
 @property (strong,nonatomic)IBOutlet UITextField * teeValue;
 @property (strong, nonatomic) IBOutlet UIButton *saveRoundButton;
 
-@property (strong, nonatomic) IBOutlet UILabel *testDataEntry;
-
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;
 -(IBAction)dismissKeyboard:(id)sender;
 -(IBAction)showTeePicker:(id)sender;
 
 
--(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext;
-
-@property (nonatomic,strong) NSString *mymessage;
-@property (nonatomic, retain) NSMutableArray *teeColors;
-
-
 @property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-
+@property bool cameFromInfo;
 @end

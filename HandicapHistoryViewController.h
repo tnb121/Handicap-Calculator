@@ -10,12 +10,16 @@
 #import <CoreData/CoreData.h>
 
 #import "HandicapHistory.h"
+#import "HandicapHistoryCell.h"
+#import "Handicap.h"
 
 @interface HandicapHistoryViewController : UIViewController<UITableViewDataSource,UITableViewDelegate,NSFetchedResultsControllerDelegate>
 
 @property (strong, nonatomic) IBOutlet UITableView *handicapHistoryTableView;
 
-@property (strong, nonatomic) NSFetchedResultsController *fetchedResultsController;
+@property (strong, nonatomic) NSFetchedResultsController *HistoryfetchedResultsController;
 @property (strong,nonatomic) NSManagedObjectContext* managedObjectContext;
-@property (strong,nonatomic) HandicapHistory * historyClass;
+@property (strong,nonatomic) HandicapHistoryCell * HcapHistoryCellClass;
+@property (strong,nonatomic) Handicap * hCapClass;
+
 @end

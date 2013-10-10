@@ -10,7 +10,6 @@
 
 @interface Differential : NSObject
 
-@property (nonatomic) double differentialCalculation;
 
 -(double)CalculateDifferential:(double)rating withslope:(double)slope withscore:(double)score;
 

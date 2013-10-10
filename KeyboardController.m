@@ -13,13 +13,12 @@
 - (UIToolbar *)getToolbarWithPrevEnabled:(BOOL)prevEnabled NextEnabled:(BOOL)nextEnabled DoneEnabled:(BOOL)doneEnabled
 {
     UIToolbar *toolbar = [[UIToolbar alloc] init];
-    [toolbar setBarStyle:UIBarStyleBlackTranslucent];
+    [toolbar setBarStyle:0];
     [toolbar sizeToFit];
 
     NSMutableArray *toolbarItems = [[NSMutableArray alloc] init];
 
     UISegmentedControl *leftItems = [[UISegmentedControl alloc] initWithItems:[NSArray arrayWithObjects:@"Previous", @"Next", nil]];
-    leftItems.segmentedControlStyle = UISegmentedControlStyleBar;
     [leftItems setEnabled:prevEnabled forSegmentAtIndex:0];
     [leftItems setEnabled:nextEnabled forSegmentAtIndex:1];
     leftItems.momentary = YES; // do not preserve button's state
@@ -33,8 +32,11 @@
 
     UIBarButtonItem *doneButton =[[UIBarButtonItem alloc] initWithBarButtonSystemItem:UIBarButtonSystemItemDone target:self action:@selector(doneDidClick:)];
     [toolbarItems addObject:doneButton];
+	[doneButton setEnabled:doneEnabled];
 
     toolbar.items = toolbarItems;
+
+	[toolbar reloadInputViews];
 
     return toolbar;
 }

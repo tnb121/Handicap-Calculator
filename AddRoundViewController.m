@@ -21,11 +21,13 @@
 @property (nonatomic, strong) Differential *diff;
 @property (nonatomic,strong)Handicap * hCapClass;
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
+@property (strong, nonatomic)NSMutableArray * teeColors;
+
 @end
 
 @implementation HandicapViewController
 
-@synthesize mymessage;
+
 @synthesize diff = _diff;
 @synthesize hCapClass=_hCapClass;
 @synthesize teeColors=_teeColors;
@@ -43,7 +45,9 @@
 @synthesize teeValue=_teeValue;
 @synthesize saveRoundButton=_saveRoundButton;
 
-@synthesize testDataEntry=_testDataEntry;
+
+bool escDontShowAgain=YES;
+@synthesize cameFromInfo=_cameFromInfo;
 
 
 -(Differential*) diff
@@ -129,21 +133,17 @@
 		self.saveRoundButton.enabled=NO;
 		return NO;
 	}
-	}
-
+}
 
 - (IBAction)testDataEntry:(id)sender
 {
 
-if([self roundDataEntryComplete] == YES)
-	_testDataEntry.text = @"YES";
-else
-	_testDataEntry.text =@"NO";
-
-[self.view setNeedsDisplay];
+	if([self roundDataEntryComplete] == YES)
+		return;
+	else
+		return;
+	[self.view setNeedsDisplay];
 }
-
-
 
 -(void)AddRound
 {
@@ -185,15 +185,14 @@ else
 	[tee setValue:teeColor forKey:@"teeColor"];
 	courses.tees = tee;
 
-	if ([[self.hCapClass roundCountCalculation] intValue] < 5)
-		return;
-	else
+	if ([self.hCapClass roundCountCalculation]> 5)
 
 	{
 		HandicapHistory * history = [NSEntityDescription insertNewObjectForEntityForName:@"HandicapHistory" inManagedObjectContext:context];
 		[history setValue:[NSDate date] forKey:@"historyDate"];
 		[history setValue:[NSNumber numberWithDouble:[self.hCapClass handicapCalculation]]  forKey:@"historyHCap"];
-	}
+		[history setValue:[NSNumber numberWithDouble:[self.hCapClass scoringAverageCalculation]] forKey:@"historyScoringAverage"];
+		[history setValue:[NSNumber numberWithDouble:[self.hCapClass roundCountCalculation]] forKey:@"historyRoundCount"];	}
 
 	NSError *error;
 	[context save:&error];
@@ -201,12 +200,13 @@ else
 
 - (IBAction)CalculateDifferentialAction:(id)sender
 {
+	NSString *mymessage=nil;
 
 	NSString *mymessage1 =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[_ratingValue.text integerValue] withslope:[_slopeValue.text integerValue] withscore:[_scoreValue.text integerValue]]];
 
 	NSString * mymessage2 = @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
 
-	if([[self.hCapClass roundCountCalculation]integerValue]+1 <5)
+	if([self.hCapClass roundCountCalculation]+1 <5)
 		mymessage=mymessage2;
 	else
 		mymessage=mymessage1;
@@ -280,6 +280,7 @@ else
 - (void)viewDidAppear:(BOOL)animated
 {
     [super viewDidAppear:animated];
+	[self escAlert];
 	
 }
 
@@ -421,5 +422,39 @@ else
 	[self dismissKeyboard:self];
 }
 
+-(void) escAlert
+{
+
+	if(escDontShowAgain ==YES && _cameFromInfo==NO)
+		{
+			NSString * escMessage = @"Are you using Equitable Stroke Control (ESC)?  See Information section for more details about ESC.";
+
+			UIAlertView *escAlert = [[UIAlertView alloc]
+									 initWithTitle:nil
+									 message:escMessage
+									 delegate:self
+									 cancelButtonTitle:Nil
+									 otherButtonTitles: @"OK",@"Learn About ESC",@"Don't show again",nil];
+			escAlert.cancelButtonIndex = 1;
+			[escAlert show];
+
+		}
+	else return;
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
+
+    if ([buttonTitle isEqualToString:@"Learn About ESC"])
+		{
+			_cameFromInfo=YES;
+			[self performSegueWithIdentifier:@"escInfoSegue" sender:self];
+		}
+	if ([buttonTitle isEqualToString:@"Don't show again"])
+		{
+			escDontShowAgain=NO;
+		}
+}
 
 @end
