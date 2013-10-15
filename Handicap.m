@@ -12,7 +12,7 @@
 @implementation Handicap
 
 double roundCountForHandicap;
-
+int x;
 
 -(NSMutableArray*) fetchRoundResultsRecent20
 {
@@ -107,8 +107,8 @@ NSLog(@"array: %@", roundScoringArray);
 -(double) calculateDifferentialSum
 {
 	double differentialSum = 0;
-	int x = 0;
-
+	int x = 1;
+	[self setHandicapParameters];
 	NSMutableArray* roundCalculationArray = [self fetchRoundResultsRecent20];
 
 	for (x=1;x<=roundCountForHandicap;x++)

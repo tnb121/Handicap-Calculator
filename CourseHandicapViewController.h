@@ -26,6 +26,7 @@
 
 @property (strong,nonatomic) Handicap * hCapClass;
 @property (strong,nonatomic) Courses * coursesClass;
+@property (strong,nonatomic) Tee *tees;
 
 @property (strong, nonatomic) NSFetchedResultsController *CoursefetchedResultsController;
 @property (strong,nonatomic) NSManagedObjectContext* managedObjectContext;

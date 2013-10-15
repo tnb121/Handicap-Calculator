@@ -185,7 +185,7 @@ bool escDontShowAgain=YES;
 	[tee setValue:teeColor forKey:@"teeColor"];
 	courses.tees = tee;
 
-	if ([self.hCapClass roundCountCalculation]> 5)
+	if ([self.hCapClass roundCountCalculation]>= 5)
 
 	{
 		HandicapHistory * history = [NSEntityDescription insertNewObjectForEntityForName:@"HandicapHistory" inManagedObjectContext:context];
@@ -425,7 +425,9 @@ bool escDontShowAgain=YES;
 -(void) escAlert
 {
 
-	if(escDontShowAgain ==YES && _cameFromInfo==NO)
+
+	BOOL dontShowAgain = [[NSUserDefaults standardUserDefaults] boolForKey:@"dontShowAgain"];
+	if(dontShowAgain ==YES && _cameFromInfo==NO)
 		{
 			NSString * escMessage = @"Are you using Equitable Stroke Control (ESC)?  See Information section for more details about ESC.";
 
@@ -453,7 +455,7 @@ bool escDontShowAgain=YES;
 		}
 	if ([buttonTitle isEqualToString:@"Don't show again"])
 		{
-			escDontShowAgain=NO;
+			[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"dontShowAgain"];
 		}
 }
 

@@ -36,5 +36,5 @@
 @property (nonatomic, retain) NSManagedObjectContext *managedObjectContext;
 @property (readonly, strong, nonatomic) NSManagedObjectModel *managedObjectModel;
 @property (readonly, strong, nonatomic) NSPersistentStoreCoordinator *persistentStoreCoordinator;
-@property bool cameFromInfo;
+@property BOOL cameFromInfo;
 @end

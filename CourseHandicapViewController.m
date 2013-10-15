@@ -10,6 +10,7 @@
 
 @interface CourseHandicapViewController ()
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
+@property (strong, nonatomic)NSMutableArray * courseAttributes;;
 @end
 
 @implementation CourseHandicapViewController
@@ -26,6 +27,8 @@
 
 @synthesize hCapClass=_hCapClass;
 @synthesize coursesClass=_coursesClass;
+@synthesize tees=_tees;
+@synthesize courseAttributes=_courseAttributes;
 
 
 -(Handicap*)hCapClass
@@ -38,6 +41,11 @@
 {
 	if(!_coursesClass) _coursesClass=[[Courses alloc] init];
 	return _coursesClass;
+}
+-(Tee*)tees
+{
+	if(!_tees)_tees = [[Tee alloc] init];
+	return _tees;
 }
 
 -(BOOL) RoundSlopeCheck
@@ -93,7 +101,18 @@
     fetchRequest.entity = [NSEntityDescription entityForName:@"Courses" inManagedObjectContext:self.managedObjectContext];
 
 	[fetchRequest setReturnsDistinctResults:YES];
+	[fetchRequest setResultType:NSDictionaryResultType];
 
+
+	_courseAttributes= [[NSMutableArray alloc] init];
+	[_courseAttributes addObject:@"courseName"];
+	[_courseAttributes addObject:@"courseRating"];
+	[_courseAttributes addObject:@"courseSlope"];
+	[_courseAttributes addObject:@"tees.teeColor"];
+
+
+
+	[fetchRequest setPropertiesToFetch:_courseAttributes];
 	// Set the sort descriptor
 	NSSortDescriptor *  date = [[NSSortDescriptor alloc] initWithKey: @"courseName"
 														   ascending: NO];
@@ -133,29 +152,28 @@
 
 
 	// fetch results for Rounds
-	Courses * courses =(Courses *) [self.fetchedResultsController objectAtIndexPath:indexPath];
+
+	NSDictionary* courseAttributes = [self.fetchedResultsController objectAtIndexPath:indexPath];
+
+	NSString * courseName =[courseAttributes objectForKey:@"courseName"];
+	NSString * teeName = [courseAttributes objectForKey:@"tees.teeColor"];
 
 	UILabel *courseNameLabel = (UILabel *)[cell.contentView viewWithTag:110];
-	NSString * courseName = courses.courseName;
-	NSString * teeName = courses.tees.teeColor;
 	NSString * courseAndTee =[[courseName stringByAppendingString:@" - "]stringByAppendingString:teeName];
     [courseNameLabel setText:courseAndTee];
 
 	UILabel *courseSlopeLabel = (UILabel *)[cell.contentView viewWithTag:120];
-	NSString* SlopeLabelText = [NSString stringWithFormat:@"%d",[courses.courseSlope intValue]];
+	NSString* SlopeLabelText = [NSString stringWithFormat:@"%d",[[courseAttributes objectForKey:@"courseSlope"]integerValue]];
 	[courseSlopeLabel setText:SlopeLabelText];
 
 	UILabel *courseRatingLabel = (UILabel *)[cell.contentView viewWithTag:140];
-	NSString* RatingLabelText = [NSString stringWithFormat:@"%d",[courses.courseRating intValue]];
+	NSString* RatingLabelText = [NSString stringWithFormat:@"%d",[[courseAttributes objectForKey:@"courseRating"] intValue]];
 	[courseRatingLabel setText:RatingLabelText];
 
 
 
 	UILabel *courseHCapLabel = (UILabel *)[cell.contentView viewWithTag:130];
-	double courseHCap = [self.hCapClass handicapCalculation] * [courses.courseSlope intValue]/113;
-
-
-
+	double courseHCap = [self.hCapClass handicapCalculation] * [[courseAttributes objectForKey:@"courseSlope"]integerValue]/113;
 
 	if (courseHCap < 0)
 
