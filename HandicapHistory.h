@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "HandicapAppDelegate.h"
 
 
 @interface HandicapHistory : NSManagedObject
@@ -17,4 +18,7 @@
 @property (nonatomic, retain) NSNumber * historyScoringAverage;
 @property (nonatomic, retain) NSNumber * historyRoundCount;
 
+@property (strong,nonatomic) NSManagedObjectContext* managedObjectContext;
+
+-(double)mostRecentHandicap;
 @end

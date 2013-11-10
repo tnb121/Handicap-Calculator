@@ -16,7 +16,6 @@
 @implementation CourseHandicapViewController
 
 @synthesize CoursefetchedResultsController=_CoursefetchedResultsController;
-@synthesize courseData=_courseData;
 
 @synthesize managedObjectContext=_managedObjectContext;
 
@@ -29,6 +28,9 @@
 @synthesize coursesClass=_coursesClass;
 @synthesize tees=_tees;
 @synthesize courseAttributes=_courseAttributes;
+
+double courseSlope;
+int slopeAverage;
 
 
 -(Handicap*)hCapClass
@@ -205,8 +207,20 @@
 
 	[super viewWillAppear:animated];
 
-		_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculationString];
-	[self.courseData reloadData];
+	_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculationString];
+	[self.courseHandicapSlopeValue becomeFirstResponder];
+
+	if([self.hCapClass roundCountCalculation]==0)
+		courseSlope= 113;
+	else
+		courseSlope = [self.hCapClass slopeAverage];
+	slopeAverage = 0;
+}
+
+- (void)viewDidAppear:(BOOL)animated
+{
+
+	[super viewDidAppear:animated];
 }
 
 
@@ -223,10 +237,10 @@
 {
     [super viewDidLoad];
 	_courseHandicapLabel.text= @"-";
-
-	self.courseData.delegate=self;
-	self.courseData.dataSource=self;
 	self.courseHandicapCalculateButton.enabled=NO;
+	self.enhancedKeyboard = [[KeyboardController alloc] init];
+	self.enhancedKeyboard.delegate=self;
+
 }
 
 - (void)viewDidDisappear:(BOOL)animated
@@ -247,8 +261,9 @@
 
 - (IBAction)dismissKeyboard:(id)sender
 {
-	[self.courseHandicapSlopeValue resignFirstResponder];
+	[_courseHandicapSlopeValue resignFirstResponder];
 }
+
 
 - (void)doneDidTouchDown
 {
@@ -268,7 +283,6 @@
 -(void)SharedCourseHandicapCalculation
 {
 	double myHandicap = [self.hCapClass handicapCalculation];
-	double courseSlope =[_courseHandicapSlopeValue.text doubleValue];
 	double courseHCap= myHandicap * courseSlope / 113;
 
 	if(courseHCap==0)
@@ -280,8 +294,85 @@
 
 - (IBAction)toolbarSetup:(id)sender
 {
-[sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:YES NextEnabled:YES DoneEnabled:YES]];
+[sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:NO NextEnabled:NO DoneEnabled:YES]];
 }
+
+
+-(void)showSlopeAlertView
+{
+	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Course Slope"
+														message:@"Enter course slope:"
+													   delegate:self
+											  cancelButtonTitle:@"Cancel"
+											  otherButtonTitles:@"OK", nil];
+	[alertView setAlertViewStyle:UIAlertViewStylePlainTextInput];
+	[[alertView textFieldAtIndex:0] setDelegate:self];
+	[[alertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
+	[[alertView textFieldAtIndex:0] becomeFirstResponder];
+	[alertView show];
+
+}
+
+- (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
+{
+    NSString *title = [alertView buttonTitleAtIndex:buttonIndex];
+    if([title isEqualToString:@"OK"])
+    {
+        UITextField *alertViewCourseSlope = [alertView textFieldAtIndex:0];
+		courseSlope=[alertViewCourseSlope.text integerValue];
+		self.courseHandicapSlopeValue.text=[NSString stringWithFormat:@"%.0f",courseSlope];
+    }
+}
+
+- (IBAction)ShowSlopePicker:(id)sender
+{
+	UIPickerView *slopePicker = [[UIPickerView alloc] init];
+	slopePicker.delegate =self;
+	slopePicker.showsSelectionIndicator = YES;
+
+	if(slopeAverage==0)
+	{
+
+	if([self.hCapClass roundCountCalculation]==0)
+		slopeAverage = 113;
+	else
+		slopeAverage = [self.hCapClass slopeAverage];
+	}
+
+	[self.courseHandicapSlopeValue setInputView:slopePicker];
+	[slopePicker selectRow:(slopeAverage-55) inComponent:0 animated:NO];
+	_courseHandicapSlopeValue.text=[NSString stringWithFormat:@"%d",slopeAverage];
+}
+
+
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+	//One column
+	return 1;
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+	//set number of rows
+	return 101;
+}
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+	//set item per row
+	int rowInt=row + 55;
+	return [NSString stringWithFormat:@"%d", rowInt];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+    courseSlope = row + 55;
+	slopeAverage=row + 55;
+	_courseHandicapSlopeValue.text=[NSString stringWithFormat:@"%.0f",courseSlope];
+	_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculationString];
+
+}
+
 
 
 @end

@@ -35,11 +35,25 @@
 	self.definitionItem.text = self.definitionItemText;
 	self.definitionDetail.text=self.definitionDetalText;
 }
+-(void)viewWillAppear:(BOOL)animated
+{
+	[super viewWillAppear:animated];
+	[self underlineDefinitionItemLabel];
+}
 
 - (void)didReceiveMemoryWarning
 {
     [super didReceiveMemoryWarning];
     // Dispose of any resources that can be recreated.
+}
+
+-(void)underlineDefinitionItemLabel
+{
+	NSDictionary *underlineAttribute = @{NSUnderlineStyleAttributeName: @(NSUnderlineStyleSingle)};
+	//escTitleLabel.attributedText = [[NSAttributedString alloc] initWithString:@"Equitable Stroke Control"attributes:underlineAttribute];
+	_definitionItem.attributedText = [[NSAttributedString alloc] initWithString:self.definitionItemText
+																		attributes:underlineAttribute];
+
 }
 
 @end

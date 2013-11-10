@@ -10,7 +10,7 @@
 #import "Handicap.h"
 #import "KeyboardController.h"
 
-@interface GroupCourseHandicapViewController : UIViewController<KeyboardControllerDelegate,UITextFieldDelegate>
+@interface GroupCourseHandicapViewController : UIViewController<KeyboardControllerDelegate,UITextFieldDelegate,UIPickerViewDataSource,UIPickerViewDelegate>
 
 @property (strong, nonatomic) IBOutlet UIScrollView *scrollview;
 

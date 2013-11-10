@@ -14,66 +14,24 @@
 double roundCountForHandicap;
 int x;
 
+@synthesize parseDataFetch=_parseDataFetch;
+
+-(ParseDataFetch*)parseDataFetch
+{
+	if(!_parseDataFetch) _parseDataFetch=[[ParseDataFetch alloc]init];
+	return _parseDataFetch;
+}
+
 -(NSMutableArray*) fetchRoundResultsRecent20
 {
-	if (_managedObjectContext == nil)
-	{
-		_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-	}
 
-	NSManagedObjectContext *moc = [self managedObjectContext];
-	NSEntityDescription *entityDescription = [NSEntityDescription
-											  entityForName:@"Rounds" inManagedObjectContext:moc];
-	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-	NSSortDescriptor *sortbyDate=[NSSortDescriptor sortDescriptorWithKey:@"roundDate" ascending:YES];
-	NSArray *sortDescriptors = @[sortbyDate];
-	[request setEntity:entityDescription];
-	[request setSortDescriptors:sortDescriptors];
-
-	NSError *error;
-
-	NSMutableArray *array = [[moc executeFetchRequest:request error:&error]mutableCopy];
-	if (array == nil)
-	{
-		// Deal with error...
-	}
-
-NSLog(@"array: %@",array);
-
-	NSSortDescriptor *sortByDiff=[NSSortDescriptor sortDescriptorWithKey:@"roundDifferential" ascending:NO];
-	NSArray * sortDescriptorsByDiff = @[sortByDiff];
-	NSArray* immutableArrayByDiff =[array sortedArrayUsingDescriptors:sortDescriptorsByDiff];
-	NSMutableArray * mutableArrayByDiff = [NSMutableArray arrayWithArray:immutableArrayByDiff];
-
-	NSLog(@"array: %@",mutableArrayByDiff);
-
+	NSMutableArray* mutableArrayByDiff = [self.parseDataFetch.roundsRecent20FromParse mutableCopy];
 	return mutableArrayByDiff;
 }
 
 -(NSArray*) fetchRoundResults
 {
-	if (_managedObjectContext == nil)
-	{
-		_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-	}
-
-	NSManagedObjectContext *moc = [self managedObjectContext];
-	NSEntityDescription *entityDescription = [NSEntityDescription
-											  entityForName:@"Rounds" inManagedObjectContext:moc];
-	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-	NSSortDescriptor *sortbyDate=[NSSortDescriptor sortDescriptorWithKey:@"roundDate" ascending:YES];
-	NSArray *sortDescriptors = @[sortbyDate];
-	[request setEntity:entityDescription];
-	[request setSortDescriptors:sortDescriptors];
-
-	NSError *error;
-
-	NSArray *array = [[moc executeFetchRequest:request error:&error]mutableCopy];
-	if (array == nil)
-	{
-		// Deal with error...
-	}
-
+	NSArray * array = self.parseDataFetch.roundsFromParse;
 	return array;
 }
 
@@ -93,16 +51,19 @@ NSLog(@"array: %@",array);
 -(double)scoringAverageCalculation
 {
 	NSArray* roundScoringArray = [self fetchRoundResults];
-	NSLog(@"array: %@", roundScoringArray);
 	NSSortDescriptor *sortByDiffs = [NSSortDescriptor sortDescriptorWithKey:@"roundDifferential" ascending:YES];
 	[roundScoringArray sortedArrayUsingDescriptors:[NSArray arrayWithObject:sortByDiffs]];
-NSLog(@"array: %@", roundScoringArray);
 
 	double scoringAverage= [[roundScoringArray valueForKeyPath:@"@avg.roundScore"]doubleValue];
 	return scoringAverage;
 }
+-(double)slopeAverage
+{
+	NSArray* slopeAverageArray = [self fetchRoundResults];
 
-
+	int slopeAverage= [[slopeAverageArray valueForKeyPath:@"@avg.roundSlope"]integerValue];
+	return slopeAverage;
+}
 
 -(double) calculateDifferentialSum
 {

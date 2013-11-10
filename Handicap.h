@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
+#import "ParseDataFetch.h"
 
 @interface Handicap : NSObject
 
@@ -17,5 +18,8 @@
 -(int)roundCountCalculation;
 -(double)scoringAverageCalculation;
 -(double)handicapCalculation;
+-(double)slopeAverage;
 -(NSString*)handicapCalculationString;
+
+@property (strong,nonatomic)ParseDataFetch * parseDataFetch;
 @end

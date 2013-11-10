@@ -90,11 +90,12 @@ bool scrollBOOL;
 	-(void)viewWillAppear:(BOOL)animated
 {
 	[super viewWillAppear:animated];
-	scrollBOOL=NO;
+	[self goToOrigin];
 	_myHandicapLabel.text = [self.hCapClass handicapCalculationString];
 	_player2HandicapValue.enabled=NO;
 	_player3HandicapValue.enabled=NO;
 	_player4HandicapValue.enabled=NO;
+	[self.groupCourseSlope becomeFirstResponder];
 }
 
 - (void)didReceiveMemoryWarning
@@ -125,6 +126,8 @@ bool scrollBOOL;
 		[self.player4HandicapValue becomeFirstResponder];
 	else if (_player4HandicapValue.isFirstResponder)
 		[self.groupCourseSlope becomeFirstResponder];
+
+	[self CheckGroupSlope];
 }
 
 - (void)previousDidTouchDown
@@ -137,6 +140,8 @@ bool scrollBOOL;
 		[self.player2HandicapValue becomeFirstResponder];
 	else if (_player4HandicapValue.isFirstResponder)
 		[self.player3HandicapValue becomeFirstResponder];
+
+	[self CheckGroupSlope];
 }
 
 - (void)doneDidTouchDown
@@ -145,6 +150,7 @@ bool scrollBOOL;
 	[self calculateGroupCourseHandicap:self];
 	[self goToOrigin];
 	[self strokesGivenCalculation];
+	[self CheckGroupSlope];
 }
 
 
@@ -197,7 +203,7 @@ bool scrollBOOL;
 		return NO;
 }
 
--(IBAction)CheckGroupSlope:(id)sender
+-(void)CheckGroupSlope
 {
 if([self GroupCourseSlopeCheck]==YES)
 	{
@@ -281,7 +287,54 @@ else
 			_strokesToGive4.text = @"-";
 }
 
+- (IBAction)ShowSlopePicker:(id)sender
+{
+	UIPickerView *slopePicker = [[UIPickerView alloc] init];
+	slopePicker.delegate =self;
+	slopePicker.showsSelectionIndicator = YES;
 
+	int slopeAverage;
+
+	if([self.hCapClass roundCountCalculation]==0)
+		slopeAverage = 113;
+	else
+		slopeAverage = [self.hCapClass slopeAverage];
+
+	[self.groupCourseSlope setInputView:slopePicker];
+	[slopePicker selectRow:(slopeAverage-55) inComponent:0 animated:NO];
+	_groupCourseSlope.text=[NSString stringWithFormat:@"%d",slopeAverage];
+}
+
+
+-(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
+{
+	//One column
+	return 1;
+}
+
+-(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
+{
+	//set number of rows
+	return 101;
+}
+
+-(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
+{
+	//set item per row
+	return [NSString stringWithFormat:@"%d", row + 55];
+}
+
+- (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
+{
+	_groupCourseSlope.text=[NSString stringWithFormat:@"%d",row + 55];
+}
+
+
+- (IBAction)logOut:(UIBarButtonItem *)sender
+{
+	[PFUser logOut];
+
+}
 
 
 @end

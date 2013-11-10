@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import "AddRoundViewController.h"
-#import "HandicapAppDelegate.h"
 #import "HomeScreenViewController.h"
 #import "Rounds.h"
 #import "Tee.h"
@@ -20,6 +19,7 @@
 @interface HandicapViewController ()
 @property (nonatomic, strong) Differential *diff;
 @property (nonatomic,strong)Handicap * hCapClass;
+@property (nonatomic,strong)HandicapHistory*handicapHistoryClass;
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @property (strong, nonatomic)NSMutableArray * teeColors;
 
@@ -30,6 +30,7 @@
 
 @synthesize diff = _diff;
 @synthesize hCapClass=_hCapClass;
+@synthesize handicapHistoryClass=_handicapHistoryClass;
 @synthesize teeColors=_teeColors;
 
 @synthesize fetchedResultsController = _fetchedResultsController;
@@ -49,6 +50,8 @@
 bool escDontShowAgain=YES;
 @synthesize cameFromInfo=_cameFromInfo;
 
+double lastHandicap;
+
 
 -(Differential*) diff
 
@@ -61,6 +64,11 @@ bool escDontShowAgain=YES;
 {
 	if(!_hCapClass) _hCapClass = [[Handicap alloc] init];
 	return _hCapClass;
+}
+-(HandicapHistory*)handicapHistoryClass
+{
+	if(!_handicapHistoryClass) _handicapHistoryClass=[[HandicapHistory alloc]init];
+	return _handicapHistoryClass;
 }
 
 -(BOOL) RoundRatingCheck
@@ -148,8 +156,14 @@ bool escDontShowAgain=YES;
 -(void)AddRound
 {
 
-	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
-	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
+
+
+	NSNumberFormatter *differentialFormatter = [[NSNumberFormatter alloc] init];
+	[differentialFormatter setMaximumFractionDigits:1];
+
+
+
+NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
 	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
 	NSString *courseName = [NSString stringWithFormat:@"%@", _courseNameValue.text];
 	NSString *teeColor = [NSString stringWithFormat:@"%@", _teeValue.text];
@@ -158,67 +172,83 @@ bool escDontShowAgain=YES;
 	[formatter setDateFormat:@"MM-dd-yyyy"];
 	NSDate *date = [formatter dateFromString:[_dateValue.text substringToIndex:10]];
 
-	NSNumber *differential = [[NSNumber alloc] initWithDouble:[self.diff CalculateDifferential:[_ratingValue.text integerValue] withslope:[_slopeValue.text integerValue] withscore:[_scoreValue.text integerValue]]];
+	double differential = [self.diff CalculateDifferential:[_ratingValue.text integerValue] withslope:[_slopeValue.text integerValue] withscore:[_scoreValue.text integerValue]];
+	NSString * differentialString = [NSString stringWithFormat:@"%.1f",differential];
+	NSNumber * differentialRounded = [differentialFormatter numberFromString:differentialString];
 
 
-	HandicapAppDelegate *appDelegate = [[UIApplication sharedApplication] delegate];
-	NSManagedObjectContext* context = [appDelegate managedObjectContext];
 
-	
+	PFObject *roundObject = [PFObject objectWithClassName:@"Rounds"];
+	roundObject[@"roundUser"] = [PFUser currentUser].username;
+	roundObject[@"roundCourse"] = courseName;
+	roundObject[@"roundTee"] = teeColor;
+	roundObject[@"roundDate"] = date;
+	roundObject[@"roundRating"] = rating;
+	roundObject[@"roundSlope"] = slope;
+	roundObject[@"roundScore"] = score;
+	roundObject[@"roundDifferential"] = differentialRounded;
+	[roundObject saveInBackground];
 
-		NSEntityDescription *roundsEntity = [NSEntityDescription entityForName:@"Rounds" inManagedObjectContext:context];
-	NSFetchRequest *request =[[NSFetchRequest alloc]init];
-	[request setEntity:roundsEntity];
 
-	Rounds * rounds = [NSEntityDescription insertNewObjectForEntityForName:@"Rounds" inManagedObjectContext:context];
-	[rounds setValue:score forKey:@"roundScore"];
-	[rounds setValue:date	forKey:@"roundDate"];
-    [rounds setValue:differential	forKey:@"roundDifferential"];
-
-	Courses	* courses = [NSEntityDescription insertNewObjectForEntityForName:@"Courses" inManagedObjectContext:context];
-	[courses setValue:rating forKey:@"courseRating"];
-	[courses setValue:slope forKey:@"courseSlope"];
-	[courses setValue:courseName forKey:@"courseName"];
-	rounds.courses = courses;
-
-	Tee	* tee = [NSEntityDescription insertNewObjectForEntityForName:@"Tee" inManagedObjectContext:context];
-	[tee setValue:teeColor forKey:@"teeColor"];
-	courses.tees = tee;
 
 	if ([self.hCapClass roundCountCalculation]>= 5)
 
 	{
-		HandicapHistory * history = [NSEntityDescription insertNewObjectForEntityForName:@"HandicapHistory" inManagedObjectContext:context];
-		[history setValue:[NSDate date] forKey:@"historyDate"];
-		[history setValue:[NSNumber numberWithDouble:[self.hCapClass handicapCalculation]]  forKey:@"historyHCap"];
-		[history setValue:[NSNumber numberWithDouble:[self.hCapClass scoringAverageCalculation]] forKey:@"historyScoringAverage"];
-		[history setValue:[NSNumber numberWithDouble:[self.hCapClass roundCountCalculation]] forKey:@"historyRoundCount"];	}
 
-	NSError *error;
-	[context save:&error];
+		PFObject *handicapHistoryObject = [PFObject objectWithClassName:@"HandicapHistory"];
+		handicapHistoryObject[@"historyUser"] = [PFUser currentUser].username;
+		handicapHistoryObject[@"historyDate"] = [NSDate date];
+		handicapHistoryObject[@"historyRoundCount"] = [NSNumber numberWithDouble:[self.hCapClass roundCountCalculation]];
+		handicapHistoryObject[@"historyHandicap"] = [NSNumber numberWithDouble:[self.hCapClass handicapCalculation]];
+		handicapHistoryObject[@"historyScoringAverage"] = [NSNumber numberWithDouble:[self.hCapClass scoringAverageCalculation]];
+		[handicapHistoryObject saveInBackground];
+	}
+
 }
 
 - (IBAction)CalculateDifferentialAction:(id)sender
 {
+	lastHandicap = [self.handicapHistoryClass mostRecentHandicap];
+	[self AddRound];
+	[self alertMessage];
+	[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
+}
+
+-(void) alertMessage
+{
 	NSString *mymessage=nil;
+	double newHandicap = [self.hCapClass handicapCalculation];
+	int roundCount = [self.hCapClass roundCountCalculation];
 
-	NSString *mymessage1 =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[_ratingValue.text integerValue] withslope:[_slopeValue.text integerValue] withscore:[_scoreValue.text integerValue]]];
-
-	NSString * mymessage2 = @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
-
-	if([self.hCapClass roundCountCalculation]+1 <5)
-		mymessage=mymessage2;
+	if(roundCount < 5)
+		mymessage= @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
+	else if (roundCount == 5)
+		mymessage = [NSString stringWithFormat:@"Your new handicap is %.1f",newHandicap];
 	else
-		mymessage=mymessage1;
+		{
+			if(newHandicap < lastHandicap)
+			{
+				mymessage = [NSString stringWithFormat:@"Your handicap decreased \r\n from %.1f to %.1f",lastHandicap,newHandicap];
+			}
+			else if (newHandicap == lastHandicap)
+			{
 
-	// open an alert with just an OK button
+				mymessage=[NSString stringWithFormat:@"Your handicap remained \r\n the same at %.1f",lastHandicap];
+			}
+			else if (newHandicap > lastHandicap)
+			{
+				mymessage = [NSString stringWithFormat:@"Your handicap increased \r\n from %.1f to %.1f",lastHandicap,newHandicap];
+			}
+			}
+
+
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
 													message:mymessage
-												   delegate:self cancelButtonTitle:@"OK" otherButtonTitles: nil];
+												   delegate:self
+										  cancelButtonTitle:@"OK"
+										  otherButtonTitles: nil];
 	[alert show];
 
-	[self AddRound];
-	[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
 }
 
 

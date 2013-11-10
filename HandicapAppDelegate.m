@@ -6,6 +6,8 @@
 //  Copyright (c) 2013 Todd Bohannon. All rights reserved.
 //
 
+#import <Parse/Parse.h>
+#import <FacebookSDK/FacebookSDK.h>
 #import "HandicapAppDelegate.h"
 #import "AddRoundViewController.h"
 #import "HomeScreenViewController.h"
@@ -23,15 +25,21 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-	//UITabBarController *tabBarController = (UITabBarController *)self.window.rootViewController;
-	//UINavigationController *navigationController = [[tabBarController viewControllers] objectAtIndex:0];
-	//HomeScreenViewController *controller = [[navigationController viewControllers] objectAtIndex:0];
-	//controller.managedObjectContext = self.managedObjectContext;
+
 	UITabBarController *tabController = (UITabBarController *)self.window.rootViewController;
     [tabController setSelectedIndex:0];
 
-    return YES;	return YES;
+	[Parse setApplicationId:@"dOEY4AHocmPKtur5RU0oCyz1ygKkiG2MIG7F9tai"
+				  clientKey:@"CH1nW38EnKKWZNdoOV6VnjhrLEn0egI6OLu6g7xX"];
+	[PFAnalytics trackAppOpenedWithLaunchOptions:launchOptions];
+	[PFFacebookUtils initializeFacebook];
+	[PFTwitterUtils initializeWithConsumerKey:@"PnlxuwDRcgdmOggzeea0A"
+							   consumerSecret:@"VUSzqyrtDD4bwu840jFIIRXMDqd6fyUnrswy5EAiXws"];
+	[PFUser logInWithUsername:@"tnb121" password:@"free1212"];
+
+	return YES;
 }
+
 
 - (void)applicationWillResignActive:(UIApplication *)application
 {
@@ -183,14 +191,22 @@
 
 #pragma mark - Application's Documents directory
 
-/**
- Returns the URL to the application's Documents directory.
- */
+
+//Returns the URL to the application's Documents directory.
+
 - (NSURL *)applicationDocumentsDirectory
 {
     return [[[NSFileManager defaultManager] URLsForDirectory:NSDocumentDirectory inDomains:NSUserDomainMask] lastObject];
 }
 
+- (BOOL)application:(UIApplication *)application handleOpenURL:(NSURL *)url {
+    return [PFFacebookUtils handleOpenURL:url];
+}
+
+- (BOOL)application:(UIApplication *)application openURL:(NSURL *)url
+  sourceApplication:(NSString *)sourceApplication annotation:(id)annotation {
+    return [PFFacebookUtils handleOpenURL:url];
+}
 
 
 #pragma mark - Core Data stack

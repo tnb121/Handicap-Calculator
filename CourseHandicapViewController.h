@@ -15,10 +15,11 @@
 #import "Tee.h"
 #import "CourseCell.h"
 
-@interface CourseHandicapViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,NSFetchedResultsControllerDelegate,KeyboardControllerDelegate>
+@interface CourseHandicapViewController : UIViewController <UITableViewDelegate,UITableViewDataSource,NSFetchedResultsControllerDelegate,KeyboardControllerDelegate,UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource>
 
-@property (strong, nonatomic) IBOutlet UITableView *courseData;
+@property (strong, nonatomic) IBOutlet UIView *courseContainer;
 
+@property (strong, nonatomic) IBOutlet UIView *courseTable;
 @property (strong, nonatomic) IBOutlet UITextField *courseHandicapSlopeValue;
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapMyHandicapLabel;
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapLabel;
