@@ -2,7 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="4514" systemVersion="13A603" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" initialViewController="esJ-9e-uaL">
     <dependencies>
         <deployment defaultVersion="1792" identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3746"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="3747"/>
     </dependencies>
     <scenes>
         <!--Home Screen View Controller - My Handicap-->
@@ -66,7 +66,7 @@
                     <navigationItem key="navigationItem" title="My Handicap" id="nxZ-86-cjm">
                         <barButtonItem key="rightBarButtonItem" systemItem="add" id="xHR-gX-tkT">
                             <connections>
-                                <segue destination="2" kind="push" identifier="AddRoundSegue" id="2fP-uy-s99"/>
+                                <action selector="checkRoundsForLiteVersion:" destination="6C7-fP-wLa" id="Lnn-gj-XsL"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
@@ -74,11 +74,12 @@
                         <outlet property="handicapLabel" destination="S0g-wW-EhY" id="Czp-iy-8Be"/>
                         <outlet property="roundCountLabel" destination="Sme-2T-kop" id="oEh-ch-DED"/>
                         <outlet property="scoringAverageLabel" destination="TSz-UN-XIa" id="W54-u4-57u"/>
+                        <segue destination="2" kind="push" identifier="AddRoundSegue" id="cid-v9-lcg"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="BlC-zy-RcY" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1220" y="-1262"/>
+            <point key="canvasLocation" x="1102" y="-1243"/>
         </scene>
         <!--Handicap View Controller-->
         <scene sceneID="5">
@@ -187,7 +188,7 @@
                     </items>
                 </toolbar>
             </objects>
-            <point key="canvasLocation" x="1634" y="-1297"/>
+            <point key="canvasLocation" x="1648" y="-1280"/>
         </scene>
         <!--Course Handicap View Controller - Course Handicap-->
         <scene sceneID="eHd-0W-Bto">
@@ -271,7 +272,7 @@
             </objects>
             <point key="canvasLocation" x="1220" y="87"/>
         </scene>
-        <!--Group Course Handicap View Controller-->
+        <!--Group Course Handicap View Controller - Group Course Handicap-->
         <scene sceneID="hHN-cJ-az1">
             <objects>
                 <viewController id="T3B-aR-NlJ" customClass="GroupCourseHandicapViewController" sceneMemberID="viewController">
@@ -471,7 +472,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </scrollView>
-                    <navigationItem key="navigationItem" id="dgp-97-2vj"/>
+                    <navigationItem key="navigationItem" title="Group Course Handicap" id="dgp-97-2vj"/>
                     <nil key="simulatedBottomBarMetrics"/>
                     <connections>
                         <outlet property="groupCourseSlope" destination="oig-x4-Uvg" id="hZi-LT-j7h"/>
@@ -563,35 +564,35 @@
                                 <rect key="frame" x="0.0" y="64" width="320" height="41"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                             </imageView>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5e7-Ka-gyd">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5e7-Ka-gyd">
                                 <rect key="frame" x="28" y="74" width="36" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" name="Helvetica-Bold" family="Helvetica" pointSize="14"/>
                                 <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rounds" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="V2A-aJ-ebq">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rounds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="V2A-aJ-ebq">
                                 <rect key="frame" x="93" y="74" width="60" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                 <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scoring" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="y6B-qu-Ogi">
-                                <rect key="frame" x="171" y="67" width="60" height="16"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Scoring" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="y6B-qu-Ogi">
+                                <rect key="frame" x="169" y="67" width="64" height="16"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                 <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Average" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GAD-B5-17X">
-                                <rect key="frame" x="171" y="82" width="63" height="21"/>
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Average" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="GAD-B5-17X">
+                                <rect key="frame" x="169" y="82" width="64" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
                                 <color key="textColor" red="0.96862745100000003" green="0.96862745100000003" blue="0.96862745100000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Handicap" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="prJ-28-WIk">
+                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Handicap" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="prJ-28-WIk">
                                 <rect key="frame" x="239" y="74" width="74" height="21"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <fontDescription key="fontDescription" type="boldSystem" pointSize="13"/>
@@ -613,7 +614,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gdR-KH-1bw" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1220" y="-562"/>
+            <point key="canvasLocation" x="1572" y="-606"/>
         </scene>
         <!--Navigation Controller - Course Handicap-->
         <scene sceneID="9qx-in-Cgs">
@@ -823,34 +824,17 @@
                                     </tableViewCell>
                                 </cells>
                             </tableViewSection>
-                            <tableViewSection headerTitle="Resources" id="RCe-43-6Zr">
+                            <tableViewSection headerTitle="Feedback" id="RCe-43-6Zr">
                                 <cells>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" editingAccessoryType="disclosureIndicator" id="9WT-uJ-McO">
-                                        <rect key="frame" x="0.0" y="491" width="320" height="32"/>
-                                        <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9WT-uJ-McO" id="QP0-tF-imb">
-                                            <rect key="frame" x="0.0" y="0.0" width="287" height="31"/>
-                                            <autoresizingMask key="autoresizingMask"/>
-                                            <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="USGA Website" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xdC-sh-3sx">
-                                                    <rect key="frame" x="20" y="4" width="213" height="25"/>
-                                                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                    <color key="highlightedColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
-                                                </label>
-                                            </subviews>
-                                        </tableViewCellContentView>
-                                    </tableViewCell>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" editingAccessoryType="disclosureIndicator" id="SQp-eh-0rB">
-                                        <rect key="frame" x="0.0" y="523" width="320" height="32"/>
+                                        <rect key="frame" x="0.0" y="491" width="320" height="32"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="SQp-eh-0rB" id="fwQ-8h-jup">
                                             <rect key="frame" x="0.0" y="0.0" width="287" height="31"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="GHIN Website" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4Gm-ku-gBg">
-                                                    <rect key="frame" x="20" y="4" width="101" height="25"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Rate App on iTunes" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="4Gm-ku-gBg">
+                                                    <rect key="frame" x="20" y="4" width="232" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -859,15 +843,15 @@
                                             </subviews>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" editingAccessoryType="disclosureIndicator" id="NhJ-aH-Fc5">
-                                        <rect key="frame" x="0.0" y="555" width="320" height="32"/>
+                                    <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" editingAccessoryType="disclosureIndicator" id="9WT-uJ-McO">
+                                        <rect key="frame" x="0.0" y="523" width="320" height="32"/>
                                         <autoresizingMask key="autoresizingMask"/>
-                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="NhJ-aH-Fc5" id="oes-k8-SYn">
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="9WT-uJ-McO" id="QP0-tF-imb">
                                             <rect key="frame" x="0.0" y="0.0" width="287" height="31"/>
                                             <autoresizingMask key="autoresizingMask"/>
                                             <subviews>
-                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="MyGolfInsight.com" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="hPc-YV-Mfk">
-                                                    <rect key="frame" x="20" y="4" width="163" height="25"/>
+                                                <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" text="Email Feedback" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="xdC-sh-3sx">
+                                                    <rect key="frame" x="20" y="4" width="213" height="25"/>
                                                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                                     <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                                     <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -881,7 +865,7 @@
                             <tableViewSection id="mzZ-Mi-Sjp">
                                 <cells>
                                     <tableViewCell contentMode="scaleToFill" selectionStyle="blue" accessoryType="disclosureIndicator" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" editingAccessoryType="disclosureIndicator" id="lxm-Yc-PFd">
-                                        <rect key="frame" x="0.0" y="592" width="320" height="32"/>
+                                        <rect key="frame" x="0.0" y="560" width="320" height="32"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="lxm-Yc-PFd" id="wM2-ht-yt9">
                                             <rect key="frame" x="0.0" y="0.0" width="287" height="31"/>
@@ -1059,7 +1043,7 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="NcL-2W-gnt" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1867" y="-570"/>
+            <point key="canvasLocation" x="2129" y="-522"/>
         </scene>
         <!--Navigation Controller - History-->
         <scene sceneID="jtH-dI-RSS">
@@ -1086,11 +1070,11 @@
             <objects>
                 <viewController title="Edit Round Information" id="Snl-Lg-j0t" customClass="EditRoundViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="bhf-3S-6Dj">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="568"/>
+                        <rect key="frame" x="0.0" y="0.0" width="325" height="411"/>
                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Course Rating" minimumFontSize="17" id="HWN-wT-zuZ">
-                                <rect key="frame" x="19" y="153" width="120" height="30"/>
+                                <rect key="frame" x="19" y="108" width="120" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="decimalPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -1100,7 +1084,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Date" minimumFontSize="17" id="aWX-dL-ibn">
-                                <rect key="frame" x="19" y="114" width="120" height="30"/>
+                                <rect key="frame" x="19" y="80" width="120" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numbersAndPunctuation" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -1110,7 +1094,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Course Name" minimumFontSize="17" clearButtonMode="unlessEditing" id="oEt-BQ-evM">
-                                <rect key="frame" x="19" y="74" width="184" height="30"/>
+                                <rect key="frame" x="19" y="52" width="184" height="30"/>
                                 <nil key="textColor"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="yes" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
@@ -1121,7 +1105,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Course Slope" minimumFontSize="17" id="oTB-Yl-a13">
-                                <rect key="frame" x="19" y="192" width="120" height="30"/>
+                                <rect key="frame" x="19" y="136" width="120" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -1131,7 +1115,7 @@
                                 </connections>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Score" minimumFontSize="17" id="cBQ-gm-rmS">
-                                <rect key="frame" x="19" y="232" width="120" height="30"/>
+                                <rect key="frame" x="19" y="164" width="120" height="30"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad" returnKeyType="done" enablesReturnKeyAutomatically="YES"/>
                                 <connections>
@@ -1141,18 +1125,18 @@
                                 </connections>
                             </textField>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" id="9eN-oT-IV7">
-                                <rect key="frame" x="165" y="192" width="111" height="40"/>
+                                <rect key="frame" x="165" y="135" width="111" height="40"/>
                                 <state key="normal" title="Save Changes"/>
                                 <state key="disabled">
                                     <color key="titleColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 </state>
                                 <connections>
-                                    <action selector="CalculateDifferentialAction:" destination="Snl-Lg-j0t" eventType="touchUpInside" id="HeE-sD-m8o"/>
+                                    <action selector="SaveChanges:" destination="Snl-Lg-j0t" eventType="touchUpInside" id="edK-1P-rJg"/>
                                 </connections>
                             </button>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="Tee" minimumFontSize="17" id="KOM-Ir-dIQ">
                                 <rect key="frame" x="211" y="74" width="89" height="30"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <autoresizingMask key="autoresizingMask"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits"/>
                                 <connections>
@@ -1188,7 +1172,7 @@
                     </items>
                 </toolbar>
             </objects>
-            <point key="canvasLocation" x="2115" y="-1297"/>
+            <point key="canvasLocation" x="2051" y="-1288"/>
         </scene>
         <!--Navigation Controller - Group-->
         <scene sceneID="RIj-L9-kqf">
@@ -1241,28 +1225,28 @@
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="310" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Date" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="mp7-QF-x3r">
-                                            <rect key="frame" x="18" y="11" width="61" height="21"/>
+                                            <rect key="frame" x="16" y="11" width="61" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="340" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rounds" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="3rf-TR-5L4">
-                                            <rect key="frame" x="87" y="11" width="71" height="21"/>
+                                            <rect key="frame" x="88" y="11" width="71" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="330" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Sc Avg" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Ns0-Md-K10">
-                                            <rect key="frame" x="166" y="11" width="66" height="21"/>
+                                            <rect key="frame" x="168" y="11" width="66" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                             <nil key="highlightedColor"/>
                                         </label>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="320" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="HCP" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="kk8-t5-UqW">
-                                            <rect key="frame" x="246" y="11" width="57" height="21"/>
+                                            <rect key="frame" x="247" y="11" width="57" height="21"/>
                                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
@@ -1280,13 +1264,10 @@
                         </prototypes>
                     </tableView>
                     <toolbarItems/>
-                    <connections>
-                        <outlet property="historyTableView" destination="cxE-oN-hl8" id="lN8-7N-1Yr"/>
-                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="gUu-Ap-AVb" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1732" y="-475"/>
+            <point key="canvasLocation" x="1220" y="-446"/>
         </scene>
         <!--Home Screen Table View Controller-->
         <scene sceneID="8mF-F4-bK3">
@@ -1297,11 +1278,11 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <prototypes>
-                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="RoundCell" id="fPF-CC-Rwu" customClass="RoundCell">
+                            <tableViewCell contentMode="scaleToFill" selectionStyle="default" accessoryType="disclosureIndicator" indentationWidth="10" reuseIdentifier="RoundCell" id="fPF-CC-Rwu" customClass="RoundCell">
                                 <rect key="frame" x="0.0" y="22" width="325" height="44"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="fPF-CC-Rwu" id="9vu-H3-V7P">
-                                    <rect key="frame" x="0.0" y="0.0" width="325" height="43"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="292" height="43"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                     <subviews>
                                         <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" tag="20" contentMode="left" text="Course Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="Hoq-n6-CHn">
@@ -1346,6 +1327,7 @@
                                     <outlet property="dateCell" destination="QCQ-oT-qQu" id="0Vc-65-yIU"/>
                                     <outlet property="differentialCell" destination="QMV-xr-rYC" id="eLL-nU-xzr"/>
                                     <outlet property="scoreCell" destination="5T8-T1-sSr" id="Uzn-OT-oow"/>
+                                    <segue destination="Snl-Lg-j0t" kind="push" identifier="EditRoundSegue" id="MJt-CY-FQo"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
@@ -1453,7 +1435,7 @@
         <simulatedScreenMetrics key="destination" type="retina4"/>
     </simulatedMetricsContainer>
     <inferredMetricsTieBreakers>
-        <segue reference="npv-f9-dH5"/>
-        <segue reference="XLR-Jq-ryA"/>
+        <segue reference="MZp-rr-Fmh"/>
+        <segue reference="HgN-oq-W6d"/>
     </inferredMetricsTieBreakers>
 </document>

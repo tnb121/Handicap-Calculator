@@ -9,19 +9,32 @@
 #import <UIKit/UIKit.h>
 #import "AddRoundViewController.h"
 #import "HomeScreenViewController.h"
-#import "Rounds.h"
-#import "Tee.h"
-#import "Courses.h"
-#import "HandicapHistory.h"
+#import "ParseData.h"
 
 
 
 @interface HandicapViewController ()
+
 @property (nonatomic, strong) Differential *diff;
+
 @property (nonatomic,strong)Handicap * hCapClass;
-@property (nonatomic,strong)HandicapHistory*handicapHistoryClass;
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @property (strong, nonatomic)NSMutableArray * teeColors;
+@property (strong,nonatomic) PFGeoPoint *currentLocation;
+
+
+@property (strong,nonatomic)IBOutlet UITextField *ratingValue;
+@property (strong,nonatomic)IBOutlet UITextField *slopeValue;
+@property (strong,nonatomic)IBOutlet UITextField *scoreValue;
+@property (strong,nonatomic)IBOutlet UITextField *dateValue;
+@property (strong,nonatomic)IBOutlet UITextField *courseNameValue;
+@property (strong,nonatomic)IBOutlet UITextField * teeValue;
+@property (strong, nonatomic) IBOutlet UIButton *saveRoundButton;
+
+
+-(IBAction)CalculateDifferentialAction:(UIButton *)sender;
+-(IBAction)dismissKeyboard:(id)sender;
+-(IBAction)showTeePicker:(id)sender;
 
 @end
 
@@ -30,13 +43,8 @@
 
 @synthesize diff = _diff;
 @synthesize hCapClass=_hCapClass;
-@synthesize handicapHistoryClass=_handicapHistoryClass;
 @synthesize teeColors=_teeColors;
 
-@synthesize fetchedResultsController = _fetchedResultsController;
-@synthesize managedObjectContext=_managedObjectContext;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-@synthesize managedObjectModel = _managedObjectModel;
 
 @synthesize ratingValue=_ratingValue;
 @synthesize slopeValue=_slopeValue;
@@ -45,9 +53,11 @@
 @synthesize courseNameValue=_courseNameValue;
 @synthesize teeValue=_teeValue;
 @synthesize saveRoundButton=_saveRoundButton;
+@synthesize currentLocation=_currentLocation;
 
 
 bool escDontShowAgain=YES;
+
 @synthesize cameFromInfo=_cameFromInfo;
 
 double lastHandicap;
@@ -65,11 +75,7 @@ double lastHandicap;
 	if(!_hCapClass) _hCapClass = [[Handicap alloc] init];
 	return _hCapClass;
 }
--(HandicapHistory*)handicapHistoryClass
-{
-	if(!_handicapHistoryClass) _handicapHistoryClass=[[HandicapHistory alloc]init];
-	return _handicapHistoryClass;
-}
+
 
 -(BOOL) RoundRatingCheck
 {
@@ -155,15 +161,13 @@ double lastHandicap;
 
 -(void)AddRound
 {
-
-
-
 	NSNumberFormatter *differentialFormatter = [[NSNumberFormatter alloc] init];
 	[differentialFormatter setMaximumFractionDigits:1];
 
 
 
-NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
+NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
+	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
 	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
 	NSString *courseName = [NSString stringWithFormat:@"%@", _courseNameValue.text];
 	NSString *teeColor = [NSString stringWithFormat:@"%@", _teeValue.text];
@@ -176,8 +180,33 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	NSString * differentialString = [NSString stringWithFormat:@"%.1f",differential];
 	NSNumber * differentialRounded = [differentialFormatter numberFromString:differentialString];
 
+	if(!_currentLocation) _currentLocation= [PFGeoPoint geoPointWithLatitude:0 longitude:0];
 
 
+	// Save to HandicapHistory
+	if ([[[ParseData sharedParseData]roundCount]integerValue]>= 5)
+
+	{
+
+		PFObject *handicapHistoryObject = [PFObject objectWithClassName:@"HandicapHistory"];
+		handicapHistoryObject[@"historyUser"] = [PFUser currentUser].username;
+		handicapHistoryObject[@"historyDate"] = [NSDate date];
+		handicapHistoryObject[@"historyRoundCount"] = [NSNumber numberWithDouble:[[[ParseData sharedParseData]roundCount]integerValue]];
+		handicapHistoryObject[@"historyHandicap"] = [NSNumber numberWithDouble:[self.hCapClass handicapCalculation]];
+		handicapHistoryObject[@"historyScoringAverage"] = [NSNumber numberWithDouble:[[[ParseData sharedParseData]scoringAverage]doubleValue]];
+
+		[handicapHistoryObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
+		 {
+			 if(!error)
+			 {
+				 [[NSNotificationCenter defaultCenter] postNotificationName:@"NeedToUpdateDataFromParse" object:nil] ;
+			 }
+			 else NSLog(@"failed");
+			 [handicapHistoryObject saveEventually];
+		 }];
+	}
+
+	// Save to Rounds
 	PFObject *roundObject = [PFObject objectWithClassName:@"Rounds"];
 	roundObject[@"roundUser"] = [PFUser currentUser].username;
 	roundObject[@"roundCourse"] = courseName;
@@ -187,38 +216,41 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	roundObject[@"roundSlope"] = slope;
 	roundObject[@"roundScore"] = score;
 	roundObject[@"roundDifferential"] = differentialRounded;
-	[roundObject saveInBackground];
+	roundObject[@"roundLocation"]=_currentLocation;
 
-
-
-	if ([self.hCapClass roundCountCalculation]>= 5)
-
+	[roundObject saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
 	{
+		if(!error)
+		{
+			[self alertMessage];
+			[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
+			[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedToUpdateDataFromParse" object:nil];
+		}
+		else
+		{
+			UIAlertView *failedAlert =[[UIAlertView alloc] initWithTitle:@"Network Error" message:@"Due to problems with your network connection your round was not saved.  The round will be saved when you are reconnected to the network." delegate:self cancelButtonTitle:@"OK" otherButtonTitles:nil];
+			[failedAlert show];
+			[roundObject saveEventually];
+			[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
+			[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedToUpdateDataFromParse" object:nil];
+		}
+    }];
 
-		PFObject *handicapHistoryObject = [PFObject objectWithClassName:@"HandicapHistory"];
-		handicapHistoryObject[@"historyUser"] = [PFUser currentUser].username;
-		handicapHistoryObject[@"historyDate"] = [NSDate date];
-		handicapHistoryObject[@"historyRoundCount"] = [NSNumber numberWithDouble:[self.hCapClass roundCountCalculation]];
-		handicapHistoryObject[@"historyHandicap"] = [NSNumber numberWithDouble:[self.hCapClass handicapCalculation]];
-		handicapHistoryObject[@"historyScoringAverage"] = [NSNumber numberWithDouble:[self.hCapClass scoringAverageCalculation]];
-		[handicapHistoryObject saveInBackground];
+
 	}
-
-}
 
 - (IBAction)CalculateDifferentialAction:(id)sender
 {
-	lastHandicap = [self.handicapHistoryClass mostRecentHandicap];
 	[self AddRound];
-	[self alertMessage];
-	[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
+
 }
 
 -(void) alertMessage
 {
 	NSString *mymessage=nil;
 	double newHandicap = [self.hCapClass handicapCalculation];
-	int roundCount = [self.hCapClass roundCountCalculation];
+	int roundCount =[[[ParseData sharedParseData]roundCount]integerValue];
+
 
 	if(roundCount < 5)
 		mymessage= @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
@@ -251,17 +283,6 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 
 }
 
-
--(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext
-	{
-		NSError *error=nil;
-
-		NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-		NSEntityDescription *entity = [NSEntityDescription entityForName: tableName inManagedObjectContext:manageObjContext];
-		[fetchRequest setEntity:entity];
-		NSArray *fetchedObjects = [manageObjContext executeFetchRequest:fetchRequest error:&error];
-		return  fetchedObjects;
-	}
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
 
@@ -278,12 +299,6 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 - (void)prepareForSaveRoundSegue:(UIStoryboardSegue*)segue sender:(id)sender
 
 {
-
-		if (_managedObjectContext == nil)
-		{
-			_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-		}
-
 
 }
 - (void)viewDidLoad
@@ -311,7 +326,15 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 {
     [super viewDidAppear:animated];
 	[self escAlert];
-	
+	lastHandicap = [self.hCapClass mostRecentHandicap];
+
+	[PFGeoPoint geoPointForCurrentLocationInBackground:^(PFGeoPoint *geoPoint, NSError *error) {
+		if (!error) {
+			_currentLocation=geoPoint;
+		}
+	}];
+
+
 }
 
 - (void)viewWillDisappear:(BOOL)animated
@@ -322,6 +345,7 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 - (void)viewDidDisappear:(BOOL)animated
 {
 	[super viewDidDisappear:animated];
+	_currentLocation=NULL;
 }
 
 

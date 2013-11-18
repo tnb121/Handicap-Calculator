@@ -11,11 +11,14 @@
 #import "Parse/Parse.h"
 
 #import "RoundCell.h"
+#import "EditRoundViewController.h"
+
+@interface HomeScreenTableViewController()
+
+@end
 
 
 @implementation HomeScreenTableViewController
-
-
 
 
 - (void)didReceiveMemoryWarning {
@@ -59,8 +62,6 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	self.homeTable.delegate=self;
-	self.homeTable.dataSource=self;
 	
 
     // Uncomment the following line to preserve selection between presentations.
@@ -97,6 +98,11 @@
     return (interfaceOrientation == UIInterfaceOrientationPortrait);
 }
 
+-(void)reloadHomeTable
+{
+	[self.tableView reloadData];
+}
+
 
 #pragma mark - PFQueryTableViewController
 
@@ -131,8 +137,12 @@
  // all objects ordered by createdAt descending.
  - (PFQuery *)queryForTable
 {
+
+	if ([PFUser currentUser] == Nil) return nil;
+
+
 	PFQuery *roundQuery = [PFQuery queryWithClassName:@"Rounds"];
-[roundQuery whereKey:@"roundUser" equalTo:[PFUser currentUser].username];
+	[roundQuery whereKey:@"roundUser" equalTo:[PFUser currentUser].username];
 
 
     // If no objects are loaded in memory, we look to the cache first to fill the table
@@ -161,16 +171,14 @@
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
 {
 
-	//static NSString *CellIdentifier = @"RoundCell";
+	//RoundCell *cell = (RoundCell * )[self.tableView dequeueReusableCellWithIdentifier:@"RoundCell" forIndexPath:indexPath];
 
-	//RoundCell*   cell = [tableView dequeueReusableCellWithIdentifier: CellIdentifier];
+    RoundCell* cell = [tableView dequeueReusableCellWithIdentifier:@"RoundCell"];
 
-	//if (cell == nil)
-	// {
-	// cell = [[RoundCell alloc] initWithStyle:UITableViewCellStyleDefault reuseIdentifier:CellIdentifier];
-	// }
+	if (cell==nil) {
+        cell = [[RoundCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"RoundCell"];
 
-	RoundCell *cell = (RoundCell * )[self.tableView dequeueReusableCellWithIdentifier:@"RoundCell" forIndexPath:indexPath];
+    }
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 	[formatter setDateFormat:@"MM-dd-yyyy"];
@@ -264,5 +272,19 @@
     [super tableView:tableView didSelectRowAtIndexPath:indexPath];
 }
 
+- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+{
+
+	if ([[segue identifier] isEqualToString:@"EditRoundSegue"])
+	{
+
+		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
+		EditRoundViewController *editVC = segue.destinationViewController;
+		PFObject *object = [self.objects objectAtIndex:indexPath.row];
+		editVC.roundToEdit = object;
+	}
+
+	NSLog(@"Unknown segue: %@", [segue identifier]);
+}
 
 @end

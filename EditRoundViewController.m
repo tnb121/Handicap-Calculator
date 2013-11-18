@@ -11,18 +11,27 @@
 #import "AddRoundViewController.h"
 #import "HandicapAppDelegate.h"
 #import "HomeScreenViewController.h"
-#import "Rounds.h"
-#import "Tee.h"
-#import "Courses.h"
-#import "HandicapHistory.h"
-
-
 
 @interface EditRoundViewController ()
 @property (nonatomic, strong) Differential *diff;
 @property (nonatomic,strong)Handicap * hCapClass;
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @property (strong,nonatomic)NSMutableArray * teeColors;
+
+@property (strong, nonatomic) IBOutlet UITextField *courseNameEditRound;
+@property (strong, nonatomic) IBOutlet UITextField *teeEditRound;
+@property (strong, nonatomic) IBOutlet UITextField *dateEditRound;
+@property (strong, nonatomic) IBOutlet UITextField *ratingEditRound;
+@property (strong, nonatomic) IBOutlet UITextField *slopeEditRound;
+@property (strong, nonatomic) IBOutlet UITextField *scoreEditRound;
+@property (strong, nonatomic) IBOutlet UIButton *saveChangesEditRoundButton;
+
+
+-(IBAction)SaveChanges:(UIButton *)sender;
+-(IBAction)dismissKeyboard:(id)sender;
+-(IBAction)showTeePicker:(id)sender;
+
+
 @end
 
 
@@ -31,13 +40,9 @@
 
 @synthesize diff = _diff;
 @synthesize hCapClass=_hCapClass;
-@synthesize rounds;
 @synthesize teeColors=_teeColors;
 
-
-@synthesize managedObjectContext=_managedObjectContext;
-@synthesize persistentStoreCoordinator = _persistentStoreCoordinator;
-@synthesize managedObjectModel = _managedObjectModel;
+@synthesize roundToEdit=_roundToEdit;
 
 @synthesize courseNameEditRound=_courseNameEditRound;
 @synthesize teeEditRound=_teeEditRound;
@@ -142,9 +147,8 @@
 	[self.view setNeedsDisplay];
 }
 
--(void)SaveChanges
+-(IBAction)SaveChanges:(UIButton *)sender
 {
-	NSManagedObjectContext * context = self.managedObjectContext;
 
 	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingEditRound.text integerValue]];
 	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeEditRound.text integerValue]];
@@ -153,67 +157,43 @@
 	NSString *teeColor = [NSString stringWithFormat:@"%@", _teeEditRound.text];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"MM-dd-yyyy"];
-	NSDate *date = [formatter dateFromString:[_dateEditRound.text substringToIndex:10]];
+	[formatter setDateFormat:@"MM/dd/yyyy"];
+	NSString *dateText =_dateEditRound.text;
+	NSDate *date = [formatter dateFromString:dateText];
 
 	NSNumber *differential = [[NSNumber alloc] initWithDouble:[self.diff CalculateDifferential:[_ratingEditRound.text integerValue] withslope:[_slopeEditRound.text integerValue] withscore:[_scoreEditRound.text integerValue]]];
 
 
+	PFQuery *saveQuery = [PFQuery queryWithClassName:@"Rounds"];
 
-	[self.rounds setValue:date forKey:@"roundDate"];
-	[self.rounds setValue:score forKey:@"roundScore"];
-	[self.rounds setValue:differential forKey:@"roundDifferential"];
-
-	[self.rounds.courses setValue:rating forKey:@"courseRating"];
-	[self.rounds.courses setValue:slope forKey:@"courseSlope"];
-	[self.rounds.courses setValue:courseName forKey:@"courseName"];
-
-	[self.rounds.courses.tees setValue:teeColor forKey:@"teeColor"];
-
-	NSError *error;
-	[context save:&error];
-
-	/*if ([self.hCapClass roundCountCalculation] < 5)
-		return;
-	else
-
+	// Retrieve the object by id
+	NSString* roundObjectID = _roundToEdit.objectId;
+	[saveQuery getObjectInBackgroundWithId:roundObjectID block:^(PFObject *roundDataToSave, NSError *error)
 	{
-		HandicapHistory * history = [NSEntityDescription insertNewObjectForEntityForName:@"HandicapHistory" inManagedObjectContext:context];
-		[history setValue:[NSDate date] forKey:@"historyDate"];
-		[history setValue:[NSNumber numberWithDouble:[self.hCapClass handicapCalculation]]  forKey:@"historyHCap"];
-		[history setValue:[NSNumber numberWithDouble:[self.hCapClass scoringAverageCalculation]] forKey:@"historyScoringAverage"];
-		[history setValue:[NSNumber numberWithDouble:[self.hCapClass roundCountCalculation]] forKey:@"historyRoundCount"];	}
 
-	[context save:&error];
-	 */
-}
+		// Now let's update it with some new data. In this case, only cheatMode and score
+		// will get sent to the cloud. playerName hasn't changed.
+		roundDataToSave[@"roundCourse"] = courseName;
+		roundDataToSave[@"roundTee"] = teeColor;
+		roundDataToSave[@"roundDate"] = date;
+		roundDataToSave[@"roundRating"] = rating;
+		roundDataToSave[@"roundSlope"] = slope;
+		roundDataToSave[@"roundScore"] = score;
+		roundDataToSave[@"roundDifferential"] = differential;
+		[roundDataToSave saveInBackground];
 
+		[roundDataToSave saveInBackgroundWithBlock:^(BOOL succeeded, NSError *error)
+		 {
+			 if(!error)
+			 {
+				 [[NSNotificationCenter defaultCenter] postNotificationName:@"NeedToUpdateDataFromParse" object:nil] ;
+				 	[self performSegueWithIdentifier:@"EditToHomeSegue" sender:self];
+			 }
+			 else NSLog(@"failed");
+			 [roundDataToSave saveEventually];
+		 }];
+	}];
 
-- (IBAction)CalculateDifferentialAction:(id)sender
-{
-
-	//NSString *mymessage1 =[NSString stringWithFormat:@"Round Differential = %.1f",[self.diff CalculateDifferential:[_ratingEditRound.text integerValue] withslope:[_slopeEditRound.text integerValue] withscore:[_scoreEditRound.text integerValue]]];
-
-	//NSString * mymessage2 = @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
-
-
-
-
-
-	[self SaveChanges];
-	[self performSegueWithIdentifier:@"EditToHomeSegue" sender:self];
-}
-
-
--(NSArray*)recordsInTable:(NSString*)tableName andManageObjectContext:(NSManagedObjectContext *)manageObjContext
-{
-	NSError *error=nil;
-
-	NSFetchRequest *fetchRequest = [[NSFetchRequest alloc] init];
-	NSEntityDescription *entity = [NSEntityDescription entityForName: tableName inManagedObjectContext:manageObjContext];
-	[fetchRequest setEntity:entity];
-	NSArray *fetchedObjects = [manageObjContext executeFetchRequest:fetchRequest error:&error];
-	return  fetchedObjects;
 }
 
 - (void)viewDidLoad
@@ -228,15 +208,30 @@
 
 -(void)setTextFieldValues
 {
-	self.courseNameEditRound.text = self.rounds.courses.courseName;
-	self.teeEditRound.text = self.rounds.courses.tees.teeColor;
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
-	[formatter setDateFormat:@"MM-dd-yyyy"];
-	NSString* dateInput=[formatter stringFromDate:self.rounds.roundDate];
-	self.dateEditRound.text = dateInput;
-	self.ratingEditRound.text=[NSString stringWithFormat:@"%.1f",[self.rounds.courses.courseRating doubleValue]];
-	self.slopeEditRound.text=[NSString stringWithFormat: @"%d",[self.rounds.courses.courseSlope integerValue]];
-	self.scoreEditRound.text=[NSString stringWithFormat: @"%d",[self.rounds.roundScore integerValue]];
+	[formatter setLocale:[[NSLocale alloc] initWithLocaleIdentifier:@"en_US_POSIX"]];
+	[formatter setDateFormat:@"MM/dd/yyyy"];
+
+	// get string values from Parse
+	NSString * teeString = [_roundToEdit objectForKey:@"roundTee"];
+	NSString* courseString = [_roundToEdit objectForKey:@"roundCourse"];
+	NSString * dateString = [formatter stringFromDate:[_roundToEdit objectForKey:@"roundDate"]];
+
+
+	NSString * slopeNumber = [_roundToEdit objectForKey:@"roundSlope"];
+	NSString * slopeString = [NSString stringWithFormat:@"%@",slopeNumber];
+	NSNumber * ratingNumber = [_roundToEdit objectForKey:@"roundRating"];
+	NSString * ratingString = [NSString stringWithFormat:@"%@",ratingNumber];
+	NSNumber * scoreNumber = [_roundToEdit objectForKey:@"roundScore"];
+	NSString * scoreString = [NSString stringWithFormat:@"%@",scoreNumber];
+
+
+	_courseNameEditRound.text = courseString;
+	_dateEditRound.text = dateString;
+	_teeEditRound.text = teeString;
+	_ratingEditRound.text =ratingString;
+	_scoreEditRound.text = scoreString;
+	_slopeEditRound.text = slopeString;
 }
 
 - (void)viewDidUnload

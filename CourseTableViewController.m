@@ -11,9 +11,9 @@
 
 #import "CourseCell.h"
 
-
-
 @interface CourseTableViewController ()
+
+@property (strong,nonatomic) Handicap * hCapClass;
 
 @end
 

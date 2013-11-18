@@ -9,12 +9,11 @@
 #import <UIKit/UIKit.h>
 #import <CoreData/CoreData.h>
 
-#import "HandicapHistory.h"
 #import "HandicapHistoryCell.h"
 #import "Handicap.h"
 
 @interface HandicapHistoryViewController : UIViewController
 
-@property (strong,nonatomic) Handicap * hCapClass;
+
 
 @end

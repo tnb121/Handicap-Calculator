@@ -7,9 +7,31 @@
 //
 
 #import "GroupCourseHandicapViewController.h"
+#import "ParseData.h"
 
 @interface GroupCourseHandicapViewController ()
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
+@property (strong,nonatomic) Handicap * hCapClass;
+
+
+@property (strong, nonatomic) IBOutlet UIScrollView *scrollview;
+
+@property (strong, nonatomic) IBOutlet UITextField *player2HandicapValue;
+@property (strong, nonatomic) IBOutlet UITextField *player3HandicapValue;
+@property (strong, nonatomic) IBOutlet UITextField *player4HandicapValue;
+@property (strong, nonatomic) IBOutlet UITextField *groupCourseSlope;
+
+@property (strong, nonatomic) IBOutlet UILabel *myHandicapLabel;
+@property (strong, nonatomic) IBOutlet UILabel *myCourseHandicap;
+@property (strong, nonatomic) IBOutlet UILabel *player2CourseHandicap;
+@property (strong, nonatomic) IBOutlet UILabel *player3CourseHandicap;
+@property (strong, nonatomic) IBOutlet UILabel *player4CourseHandicap;
+
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGiveMy;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGive2;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGive3;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGive4;
+
 @end
 
 @implementation GroupCourseHandicapViewController
@@ -45,7 +67,7 @@ bool scrollBOOL;
 	int player4Handicap = lround([_player4HandicapValue.text doubleValue]);
 	int courseSlope =[_groupCourseSlope.text doubleValue];
 
-	_myCourseHandicap.text= [NSString stringWithFormat:@"%.1d",myRoundedCourseHandicap];
+	_myCourseHandicap.text= [NSString stringWithFormat:@"%.1d",myRoundedCourseHandicap*courseSlope/113];
 	if(!_player2HandicapValue.text)
 		_player2CourseHandicap.text=@"-";
 	else
@@ -86,6 +108,7 @@ bool scrollBOOL;
 	self.player2HandicapValue.delegate=self;
 	self.player3HandicapValue.delegate=self;
 	self.player4HandicapValue.delegate=self;
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(SetDataAfterParseFetch) name:@"ParseCommunicationComplete" object:nil];
 }
 	-(void)viewWillAppear:(BOOL)animated
 {
@@ -295,10 +318,10 @@ else
 
 	int slopeAverage;
 
-	if([self.hCapClass roundCountCalculation]==0)
+	if([[[ParseData sharedParseData]roundCount]integerValue]==0)
 		slopeAverage = 113;
 	else
-		slopeAverage = [self.hCapClass slopeAverage];
+		slopeAverage = [[[ParseData sharedParseData]slopeAverage]integerValue];
 
 	[self.groupCourseSlope setInputView:slopePicker];
 	[slopePicker selectRow:(slopeAverage-55) inComponent:0 animated:NO];
@@ -327,13 +350,13 @@ else
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
 	_groupCourseSlope.text=[NSString stringWithFormat:@"%d",row + 55];
+	[self calculateGroupCourseHandicap:(id)self];
 }
 
-
-- (IBAction)logOut:(UIBarButtonItem *)sender
+-(void)SetDataAfterParseFetch
 {
-	[PFUser logOut];
-
+	_myHandicapLabel.text = [self.hCapClass handicapCalculationString];
+	[self calculateGroupCourseHandicap:(id)self];
 }
 
 

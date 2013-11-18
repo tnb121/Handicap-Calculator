@@ -11,8 +11,7 @@
 #import "RoundCell.h"
 
 @interface HomeScreenTableViewController : PFQueryTableViewController <UITableViewDelegate,UITableViewDataSource>
-@property (strong, nonatomic) IBOutlet UITableView *homeTable;
 
-
+-(void) reloadHomeTable;
 
 @end

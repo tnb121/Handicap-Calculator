@@ -7,9 +7,12 @@
 //
 
 #import "HandicapHistoryViewController.h"
-#import "HandicapAppDelegate.h"
+#import "ParseData.h"
 
 @interface HandicapHistoryViewController ()
+
+@property (strong,nonatomic) Handicap * hCapClass;
+
 
 @end
 
@@ -18,45 +21,11 @@
 @synthesize hCapClass=_hCapClass;
 
 
-
 -(Handicap*)hCapClass
 {
 	if(!_hCapClass)_hCapClass = [[Handicap alloc] init];
 	return _hCapClass;
-
 }
-
-/*
--(NSMutableArray*) fetchHistoryResults
-{
-	if (_managedObjectContext == nil)
-	{
-		_managedObjectContext = [(HandicapAppDelegate *)[[UIApplication sharedApplication] delegate] managedObjectContext];
-	}
-
-	NSManagedObjectContext *moc = [self managedObjectContext];
-	NSEntityDescription *entityDescription = [NSEntityDescription
-											  entityForName:@"HandicapHistory" inManagedObjectContext:moc];
-	NSFetchRequest *request = [[NSFetchRequest alloc] init];
-	NSSortDescriptor *sortbyDate=[NSSortDescriptor sortDescriptorWithKey:@"historyDate" ascending:YES];
-	NSArray *sortDescriptors = @[sortbyDate];
-	[request setEntity:entityDescription];
-	[request setSortDescriptors:sortDescriptors];
-
-	NSError *error;
-
-	NSMutableArray *array = [[moc executeFetchRequest:request error:&error]mutableCopy];
-	if (array == nil)
-	{
-		// Deal with error...
-	}
-
-
-	return array;
-}
-
- */
-
 
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
@@ -71,7 +40,7 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
+	[[ParseData sharedParseData] updateParseHandicapHistory];
 }
 
 - (void)viewDidDisappear:(BOOL)animated

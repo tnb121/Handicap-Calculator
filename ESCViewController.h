@@ -9,8 +9,6 @@
 #import <UIKit/UIKit.h>
 
 @interface ESCViewController : UIViewController
-@property (strong, nonatomic) IBOutlet UILabel *escTitleLabel;
-@property (strong, nonatomic) IBOutlet UILabel *escCourseHCapLabel;
-@property (strong, nonatomic) IBOutlet UILabel *escMaxScoreLabel;
+
 
 @end

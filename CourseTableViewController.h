@@ -10,9 +10,5 @@
 #import "Handicap.h"
 
 @interface CourseTableViewController : PFQueryTableViewController
-@property (strong, nonatomic) IBOutlet UITableView *courseTableView;
-
-@property (strong,nonatomic) Handicap * hCapClass;
-
 
 @end

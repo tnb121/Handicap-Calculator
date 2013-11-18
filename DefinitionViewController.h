@@ -10,9 +10,6 @@
 
 @interface DefinitionViewController : UIViewController
 
-@property (strong, nonatomic) IBOutlet UILabel *definitionItem;
-@property (strong, nonatomic) IBOutlet UITextView *definitionDetail;
-
 @property (strong,nonatomic) NSString* definitionItemText;
 @property (strong,nonatomic)NSString* definitionDetalText;
 

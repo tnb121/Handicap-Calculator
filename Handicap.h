@@ -8,18 +8,16 @@
 
 #import <Foundation/Foundation.h>
 #import <CoreData/CoreData.h>
-#import "ParseDataFetch.h"
+#import <Parse/Parse.h>
 
 @interface Handicap : NSObject
 
-@property (strong,nonatomic) NSManagedObjectContext* managedObjectContext;
 
 -(double)calculateCourseHandicap:(double)slope withPlayerHandicap:(double) playerHandicap;
--(int)roundCountCalculation;
--(double)scoringAverageCalculation;
 -(double)handicapCalculation;
--(double)slopeAverage;
 -(NSString*)handicapCalculationString;
+-(double)mostRecentHandicap;
 
-@property (strong,nonatomic)ParseDataFetch * parseDataFetch;
+
+
 @end

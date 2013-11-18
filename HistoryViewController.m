@@ -10,6 +10,8 @@
 
 @interface HistoryViewController ()
 
+@property (strong,nonatomic) Handicap * hCapClass;
+
 @end
 
 @implementation HistoryViewController
@@ -151,6 +153,7 @@ double courseSlope;
 {
 	PFQuery *roundQuery = [PFQuery queryWithClassName:@"HandicapHistory"];
 	[roundQuery whereKey:@"historyUser" equalTo:[PFUser currentUser].username];
+	[roundQuery orderByDescending:@"historyRoundCount"];
 
 
     // If no objects are loaded in memory, we look to the cache first to fill the table
@@ -192,10 +195,10 @@ double courseSlope;
 	NSString* dateString = [formatter stringFromDate:[object objectForKey:@"historyDate"]];
 
 	NSNumber * scoringAverageNumber = [object objectForKey:@"historyScoringAverage"];
-	NSString * scoringAverageString = [NSString stringWithFormat:@"%@",scoringAverageNumber];
+	NSString * scoringAverageString = [NSString stringWithFormat:@"%.1f",[scoringAverageNumber doubleValue]];
 
 	NSNumber * handicapNumber = [object objectForKey:@"historyHandicap"];
-	NSString * handicapString = [NSString stringWithFormat:@"%@",handicapNumber];
+	NSString * handicapString = [NSString stringWithFormat:@"%.1f",[handicapNumber doubleValue]];
 
 
 	cell.historyCellDateLabel.text = dateString;

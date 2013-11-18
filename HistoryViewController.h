@@ -11,6 +11,5 @@
 #import "HandicapHistoryCell.h"
 
 @interface HistoryViewController : PFQueryTableViewController
-@property (strong, nonatomic) IBOutlet UITableView *historyTableView;
 
-@property (strong,nonatomic) Handicap * hCapClass;@end
+@end
