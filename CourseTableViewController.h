@@ -9,6 +9,6 @@
 #import <Parse/Parse.h>
 #import "Handicap.h"
 
-@interface CourseTableViewController : PFQueryTableViewController
+@interface CourseTableViewController : UITableViewController
 
 @end

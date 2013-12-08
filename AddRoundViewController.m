@@ -11,8 +11,6 @@
 #import "HomeScreenViewController.h"
 #import "ParseData.h"
 
-
-
 @interface HandicapViewController ()
 
 @property (nonatomic, strong) Differential *diff;
@@ -20,6 +18,7 @@
 @property (nonatomic,strong)Handicap * hCapClass;
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
 @property (strong, nonatomic)NSMutableArray * teeColors;
+@property (strong,nonatomic)NSMutableArray * coursesArray;
 @property (strong,nonatomic) PFGeoPoint *currentLocation;
 
 
@@ -31,10 +30,12 @@
 @property (strong,nonatomic)IBOutlet UITextField * teeValue;
 @property (strong, nonatomic) IBOutlet UIButton *saveRoundButton;
 
+@property (strong, nonatomic) IBOutlet UITextField *existingRoundText;
 
 -(IBAction)CalculateDifferentialAction:(UIButton *)sender;
 -(IBAction)dismissKeyboard:(id)sender;
 -(IBAction)showTeePicker:(id)sender;
+
 
 @end
 
@@ -164,9 +165,11 @@ double lastHandicap;
 	NSNumberFormatter *differentialFormatter = [[NSNumberFormatter alloc] init];
 	[differentialFormatter setMaximumFractionDigits:1];
 
+	[[ParseData sharedParseData]incrementRoundCount];
 
 
-NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
+
+	NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerValue]];
 	NSNumber *slope = [[NSNumber alloc] initWithDouble:[_slopeValue.text integerValue]];
 	NSNumber *score= [[NSNumber alloc] initWithDouble:[_scoreValue.text integerValue]];
 	NSString *courseName = [NSString stringWithFormat:@"%@", _courseNameValue.text];
@@ -222,9 +225,27 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	{
 		if(!error)
 		{
-			[self alertMessage];
-			[self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
-			[[NSNotificationCenter defaultCenter] postNotificationName:@"NeedToUpdateDataFromParse" object:nil];
+				PFQuery *round20Query = [PFQuery queryWithClassName:@"Rounds"];
+				[round20Query orderByDescending:@"roundDate"];
+				[round20Query setLimit:(20)];
+				[round20Query whereKey:@"roundUser" equalTo:[PFUser currentUser].username];
+
+				[round20Query findObjectsInBackgroundWithBlock:^(NSArray *round20Objects,NSError *error)
+				 {
+					 if(!error)
+					 {
+						 NSLog(@"Success");
+						 ParseData * parseData = [ParseData sharedParseData];
+						parseData.roundsRecent20FromParse =[round20Objects sortedArrayUsingDescriptors:[NSArray arrayWithObject:[[NSSortDescriptor alloc] initWithKey:@"roundDifferential" ascending:NO]]];
+						 [[NSNotificationCenter defaultCenter] postNotificationName:@"ParseCommunicationComplete" object:nil];
+						 [self alertMessage];
+						 [self performSegueWithIdentifier:@"SavetoHomeSegue" sender:self];
+						 [[NSNotificationCenter defaultCenter] postNotificationName:@"NeedToUpdateDataFromParse" object:nil];
+
+					 }
+					 else NSLog(@"failed");
+				 }];
+
 		}
 		else
 		{
@@ -237,7 +258,7 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
     }];
 
 
-	}
+}
 
 - (IBAction)CalculateDifferentialAction:(id)sender
 {
@@ -248,30 +269,35 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 -(void) alertMessage
 {
 	NSString *mymessage=nil;
-	double newHandicap = [self.hCapClass handicapCalculation];
 	int roundCount =[[[ParseData sharedParseData]roundCount]integerValue];
+	int newHandicapRounded = [self.hCapClass handicapCalculation]*10;
+	int lastHandicapRounded = lastHandicap*10;
+
+	double lastHandicapDouble = lastHandicapRounded;
+
+	NSString * lastHandicapString = [NSString stringWithFormat:@"%.1f",lastHandicapDouble/10];
 
 
 	if(roundCount < 5)
 		mymessage= @"A minimum of 5 rounds must be entered before a handicap can be calculated.";
 	else if (roundCount == 5)
-		mymessage = [NSString stringWithFormat:@"Your new handicap is %.1f",newHandicap];
+		mymessage = [NSString stringWithFormat:@"Your new handicap is %.1d",newHandicapRounded/10];
 	else
 		{
-			if(newHandicap < lastHandicap)
+			if(newHandicapRounded < lastHandicapRounded)
 			{
-				mymessage = [NSString stringWithFormat:@"Your handicap decreased \r\n from %.1f to %.1f",lastHandicap,newHandicap];
+				mymessage = [NSString stringWithFormat:@"Your handicap decreased \r\n from %@ to %@",lastHandicapString,[self.hCapClass handicapCalculationString]];
 			}
-			else if (newHandicap == lastHandicap)
+			else if (newHandicapRounded == lastHandicapRounded)
 			{
 
-				mymessage=[NSString stringWithFormat:@"Your handicap remained \r\n the same at %.1f",lastHandicap];
+				mymessage=[NSString stringWithFormat:@"Your handicap remained \r\n the same at %@",lastHandicapString];
 			}
-			else if (newHandicap > lastHandicap)
+			else if (newHandicapRounded > lastHandicapRounded)
 			{
-				mymessage = [NSString stringWithFormat:@"Your handicap increased \r\n from %.1f to %.1f",lastHandicap,newHandicap];
+				mymessage = [NSString stringWithFormat:@"Your handicap increased \r\n from %@ to %@",lastHandicapString,[self.hCapClass handicapCalculationString]];
 			}
-			}
+		}
 
 
 	UIAlertView *alert = [[UIAlertView alloc] initWithTitle:nil
@@ -318,7 +344,6 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 - (void)viewWillAppear:(BOOL)animated
 {
     [super viewWillAppear:animated];
-	[self.courseNameValue becomeFirstResponder];
 	self.saveRoundButton.enabled = NO;
 }
 
@@ -334,6 +359,10 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 		}
 	}];
 
+	ParseData *parseData = [ParseData sharedParseData];
+
+	if(parseData.roundCount>0) [self courseAlert];
+	else [_courseNameValue becomeFirstResponder];
 
 }
 
@@ -383,6 +412,7 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	UIPickerView *teePicker = [[UIPickerView alloc] init];
 	teePicker.delegate =self;
 	teePicker.showsSelectionIndicator = YES;
+	teePicker.tag = 1;
 	[self.teeValue setInputView:teePicker];
 
 
@@ -399,6 +429,20 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	_teeValue.text = [_teeColors objectAtIndex:0];
 
 }
+
+-(void)showCoursePicker2:(id)sender
+{
+	UIPickerView *coursePicker = [[UIPickerView alloc] init];
+	coursePicker.delegate =self;
+	coursePicker.showsSelectionIndicator = YES;
+	coursePicker.tag = 2;
+	[self.courseNameValue setInputView:coursePicker];
+
+	ParseData * parseData = [ParseData sharedParseData];
+	// initialize the Array of tee colors
+	_coursesArray=[parseData.uniqueCourseArray mutableCopy];
+}
+
 -(NSInteger)numberOfComponentsInPickerView:(UIPickerView *)pickerView
 {
 	//One column
@@ -407,20 +451,39 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 
 -(NSInteger)pickerView:(UIPickerView *)pickerView numberOfRowsInComponent:(NSInteger)component
 {
-	//set number of rows
-	return _teeColors.count;
+
+	if(pickerView.tag == 1) return _teeColors.count;
+	if(pickerView.tag ==2) return _coursesArray.count;
+	else return 0;
 }
+
 
 -(NSString *)pickerView:(UIPickerView *)pickerView titleForRow:(NSInteger)row forComponent:(NSInteger)component
 {
-	//set item per row
-	return [_teeColors objectAtIndex:row];
+	if(pickerView.tag ==1) return [_teeColors objectAtIndex:row];
+	if(pickerView.tag == 2)
+	{
+		NSString * courseName = [[_coursesArray objectAtIndex:row]valueForKey:@"name"];
+		NSString * teeName = [[_coursesArray objectAtIndex:row]valueForKey:@"tee"];
+		NSString * courseString2 = [[courseName stringByAppendingString:@" - "]stringByAppendingString:teeName];
+		return courseString2;
+	}
+		else return nil;
 }
 
 - (void)pickerView:(UIPickerView *)pickerView didSelectRow:(NSInteger)row inComponent:(NSInteger)component
 {
-    _teeValue.text=[_teeColors objectAtIndex:row];
+	if(pickerView.tag == 1) _teeValue.text=[_teeColors objectAtIndex:row];
+	if(pickerView.tag ==2)
+	{
+		_courseNameValue.text =[[_coursesArray objectAtIndex:row] valueForKey:@"name"];
+		_teeValue.text= [[_coursesArray objectAtIndex:row] valueForKey:@"tee"];
+		_slopeValue.text = [NSString stringWithFormat:@"%@",[[_coursesArray objectAtIndex:row] valueForKey:@"rating"]];
+		_ratingValue.text =[NSString stringWithFormat:@"%@",[[_coursesArray objectAtIndex:row] valueForKey:@"slope"]] ;
+	}
 }
+
+#pragma mark Existing Course Picker View
 
 
 
@@ -431,6 +494,7 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	[_dateValue resignFirstResponder];
 	[_slopeValue resignFirstResponder];
 	[_scoreValue resignFirstResponder];
+	[_existingRoundText resignFirstResponder];
 }
 - (IBAction)toolbarSetup:(id)sender
 {
@@ -473,15 +537,20 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 
 - (void)doneDidTouchDown
 {
-	[self dismissKeyboard:self];
+
+
+	if([_existingRoundText isFirstResponder] == YES)
+	{
+		[_existingRoundText resignFirstResponder];
+[_dateValue becomeFirstResponder];
+	}
+	else 	[self dismissKeyboard:self];;
 }
 
 -(void) escAlert
 {
-
-
-	BOOL dontShowAgain = [[NSUserDefaults standardUserDefaults] boolForKey:@"dontShowAgain"];
-	if(dontShowAgain ==YES && _cameFromInfo==NO)
+	escDontShowAgain = [[NSUserDefaults standardUserDefaults] boolForKey:@"dontShowAgain"];
+	if(escDontShowAgain ==YES && _cameFromInfo==NO)
 		{
 			NSString * escMessage = @"Are you using Equitable Stroke Control (ESC)?  See Information section for more details about ESC.";
 
@@ -498,6 +567,21 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 	else return;
 }
 
+-(void)courseAlert
+{
+
+		UIAlertView *courseAlert = [[UIAlertView alloc]
+								 initWithTitle:nil
+								 message:@"Is this a new or existing course?"
+								 delegate:self
+								 cancelButtonTitle:Nil
+								 otherButtonTitles: @"New",@"Existing",nil];
+		[courseAlert show];
+
+}
+
+
+
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {
     NSString *buttonTitle = [alertView buttonTitleAtIndex:buttonIndex];
@@ -511,6 +595,37 @@ NSNumber *rating = [[NSNumber alloc] initWithDouble:[_ratingValue.text integerVa
 		{
 			[[NSUserDefaults standardUserDefaults] setBool:NO forKey:@"dontShowAgain"];
 		}
+
+	if ([buttonTitle isEqualToString:@"New"])
+	{
+		[self.courseNameValue becomeFirstResponder];
+	}
+
+	if ([buttonTitle isEqualToString:@"Existing"])
+	{
+		[self dismissKeyboard:(self)];
+		[self.existingRoundText becomeFirstResponder];
+
+	}
+
+
+}
+- (IBAction)showCoursePicker:(id)sender
+{
+
+	UIPickerView * coursePicker= [[UIPickerView alloc] init];
+	coursePicker.delegate=self;
+	coursePicker.showsSelectionIndicator=YES;
+	coursePicker.tag=2;
+	[self.existingRoundText setInputView:coursePicker];
+
+	ParseData * parseData = [ParseData sharedParseData];
+	_coursesArray=[parseData.uniqueCourseArray mutableCopy];
+	_courseNameValue.text =[[_coursesArray objectAtIndex:0] valueForKey:@"name"];
+	_teeValue.text= [[_coursesArray objectAtIndex:0] valueForKey:@"tee"];
+	_slopeValue.text = [NSString stringWithFormat:@"%@",[[_coursesArray objectAtIndex:0] valueForKey:@"rating"]];
+	_ratingValue.text =[NSString stringWithFormat:@"%@",[[_coursesArray objectAtIndex:0] valueForKey:@"slope"]] ;
+
 }
 
 @end

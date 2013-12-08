@@ -12,8 +12,6 @@
 #import "HandicapAppDelegate.h"
 #import "KeyboardController.h"
 
-
-
 @interface HandicapViewController: UIViewController<UITextFieldDelegate,KeyboardControllerDelegate,UIPickerViewDataSource, UIPickerViewDelegate>
 
 @property BOOL cameFromInfo;

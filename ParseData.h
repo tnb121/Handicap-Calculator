@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 #import <Parse/Parse.h>
+#import <StoreKit/StoreKit.h>
 
 @interface ParseData : NSObject
 {
@@ -22,16 +23,20 @@
 
 + (id)sharedParseData;
 
+-(NSArray *) uniqueCourseArray;
 -(void)updateParseRounds;
 -(void)updateParseHandicapHistory;
 -(void)updateParseRoundsRecent20;
 -(void)updateParseCourses;
+-(void)updateAppVersion;
+-(void)upgradeToFullVersion;
+-(void)incrementRoundCount;
 
 @property (retain,nonatomic) NSNumber * slopeAverage;
 @property (nonatomic,retain) NSNumber * scoringAverage;
 @property (retain,nonatomic) NSNumber * roundCount;
 @property (strong,nonatomic) NSArray * roundsFromParse;
-@property (strong,nonatomic) NSArray * roundsRecent20FromParse;
+@property (copy,nonatomic) NSArray * roundsRecent20FromParse;
 @property (strong,nonatomic) NSArray * handicapHistoryFromParse;
 @property (strong,nonatomic) NSArray * coursesFromParse;
 

@@ -8,7 +8,9 @@
 
 #import <Parse/Parse.h>
 #import <FacebookSDK/FacebookSDK.h>
+#import <StoreKit/StoreKit.h>
 #import "HandicapAppDelegate.h"
+#import "ParseData.h"
 
 
 @interface HandicapAppDelegate()
@@ -32,11 +34,12 @@
 	[PFTwitterUtils initializeWithConsumerKey:@"PnlxuwDRcgdmOggzeea0A"
 							   consumerSecret:@"VUSzqyrtDD4bwu840jFIIRXMDqd6fyUnrswy5EAiXws"];
 
-#if defined (LITE_VERSION)
-	NSLog(@"Lite Version");
-#else
-	NSLog(@"Full Version");
-#endif
+	[PFPurchase addObserverForProduct:@"com.mygolfinsight.mygolfhandicap.fullversionupgrade" block:^(SKPaymentTransaction *transaction)
+	{
+		// Write business logic that should run once this product is purchased.
+		[[ParseData sharedParseData] upgradeToFullVersion];
+
+	}];
 
 
 	return YES;

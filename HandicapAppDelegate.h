@@ -8,9 +8,7 @@
 
 #import <UIKit/UIKit.h>
 
-
 @interface HandicapAppDelegate : UIResponder <UIApplicationDelegate>
-
 
 @property (strong, nonatomic) UIWindow *window;
 

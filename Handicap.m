@@ -19,8 +19,10 @@
 
 -(double)handicapCalculation
 {
-	double roundCountParse = [[[ParseData sharedParseData]roundCount]doubleValue];
-	double roundCountForHandicap=[self CalculateHCapRounds:(double) roundCountParse];
+	int roundCountParse = [[[ParseData sharedParseData]roundCount]doubleValue];
+	int	roundCountForHandicap=[self CalculateHCapRounds:(double) roundCountParse];
+
+	if(roundCountForHandicap == 0) return 0;
 
 	double differentialSum = 0;
 	int x = 1;
@@ -44,7 +46,7 @@
 	NSString* handicapString = [NSString stringWithFormat:@"%.1f",self.handicapCalculation];
 	NSString* handicapStringNegative = [NSString stringWithFormat:@"%.1f",-(self.handicapCalculation)];
 	if([[[ParseData sharedParseData]roundCount]integerValue]<5)
-		return @" - ";
+		return @"-";
 	else if (self.handicapCalculation <0)
 		return [@"+"stringByAppendingString:handicapStringNegative];
 	else
@@ -53,7 +55,11 @@
 
 -(double) CalculateHCapRounds:(double) rounds
 {
-	if (rounds <=6)
+	if(rounds <=4)
+	{
+		return 0;
+	}
+	else if (rounds <=6)
 	{
 		return 1;
 	}
@@ -91,7 +97,7 @@
 		return 0;
 	}
 
-	double lastHandicap =[[[array lastObject]	valueForKey:@"historyHandicap"] doubleValue];
+	double lastHandicap =[[[array firstObject]	valueForKey:@"historyHandicap"] doubleValue];
 
 	return lastHandicap;
 }

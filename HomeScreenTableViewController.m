@@ -12,8 +12,11 @@
 
 #import "RoundCell.h"
 #import "EditRoundViewController.h"
+#import "ParseData.h"
 
 @interface HomeScreenTableViewController()
+
+@property (strong,nonatomic) NSArray * roundArray;
 
 @end
 
@@ -28,7 +31,7 @@
     // Release any cached data, images, etc that aren't in use.
 }
 
-
+/*
 - (id)initWithStyle:(UITableViewStyle)style
 {
     self = [super initWithStyle:style];
@@ -55,30 +58,25 @@
     }
     return self;
 }
-
+*/
 
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(reloadHomeTable) name:@"ParseRoundsCommunicationComplete" object:nil];
 
-    // Uncomment the following line to preserve selection between presentations.
-    // self.clearsSelectionOnViewWillAppear = NO;
-
-    // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
-    // self.navigationItem.rightBarButtonItem = self.editButtonItem;
 }
 
-- (void)viewDidUnload {
+- (void)viewDidUnload
+{
     [super viewDidUnload];
-    // Release any retained subviews of the main view.
-    // e.g. self.myOutlet = nil;
 }
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
+	[self.tableView reloadData];
 }
 
 - (void)viewDidAppear:(BOOL)animated {
@@ -93,10 +91,6 @@
     [super viewDidDisappear:animated];
 }
 
-- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation {
-    // Return YES for supported orientations
-    return (interfaceOrientation == UIInterfaceOrientationPortrait);
-}
 
 -(void)reloadHomeTable
 {
@@ -106,40 +100,36 @@
 
 #pragma mark - PFQueryTableViewController
 
-- (void)objectsWillLoad
-{
-    [super objectsWillLoad];
 
-    // This method is called before a PFQuery is fired to get more objects
-}
 
-- (void)objectsDidLoad:(NSError *)error
-{
-    [super objectsDidLoad:error];
-
-    // This method is called every time objects are loaded from Parse via the PFQuery
-}
 
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
-	return 1;
+	if(![PFUser currentUser]) return 0;
 
+	else return 1;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	int fetchCount = [self.objects count];
-	return fetchCount;
+	if (![PFUser currentUser])return 0;
+
+	else
+	{
+		int test =[[[ParseData sharedParseData]roundsFromParse] count];
+	return test;;
+	}
 }
 
 
  // Override to customize what kind of query to perform on the class. The default is to query for
  // all objects ordered by createdAt descending.
- - (PFQuery *)queryForTable
+
+/*
+- (PFQuery *)queryForTable
 {
 
-	if ([PFUser currentUser] == Nil) return nil;
-
+	if (![PFUser currentUser])return nil;
 
 	PFQuery *roundQuery = [PFQuery queryWithClassName:@"Rounds"];
 	[roundQuery whereKey:@"roundUser" equalTo:[PFUser currentUser].username];
@@ -166,19 +156,25 @@
  return roundQuery;
  }
 
+*/
 
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
 	//RoundCell *cell = (RoundCell * )[self.tableView dequeueReusableCellWithIdentifier:@"RoundCell" forIndexPath:indexPath];
 
     RoundCell* cell = [tableView dequeueReusableCellWithIdentifier:@"RoundCell"];
 
-	if (cell==nil) {
+	if (cell==nil)
+	{
         cell = [[RoundCell alloc]initWithStyle:UITableViewCellStyleDefault reuseIdentifier:@"RoundCell"];
 
     }
+
+	// get string values from Parse
+	_roundArray = [[ParseData sharedParseData]roundsFromParse];
+
+	PFObject * roundObject = [_roundArray objectAtIndex:indexPath.row];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 	[formatter setDateFormat:@"MM-dd-yyyy"];
@@ -186,15 +182,15 @@
 	[formatter setDateFormat:@"MM/dd/yy"];
 
 	 // get string values from Parse
-	 NSString * teeString =[object objectForKey:@"roundTee"];
-	 NSString* courseString = [object objectForKey:@"roundCourse"];
+	 NSString * teeString =[roundObject objectForKey:@"roundTee"];
+	 NSString* courseString = [roundObject objectForKey:@"roundCourse"];
 	 	 NSString * courseString2 = [[courseString stringByAppendingString:@" - "]stringByAppendingString:teeString];
-	 NSString * dateString = [formatter stringFromDate:[object objectForKey:@"roundDate"]];
+	 NSString * dateString = [formatter stringFromDate:[roundObject objectForKey:@"roundDate"]];
 
-	NSNumber * scoreNumber = [object objectForKey:@"roundScore"];
+	NSNumber * scoreNumber = [roundObject objectForKey:@"roundScore"];
 	NSString * scoreString = [NSString stringWithFormat:@"%@",scoreNumber];
 
-	NSNumber * differentialNumber = [object objectForKey:@"roundDifferential"];
+	NSNumber * differentialNumber = [roundObject objectForKey:@"roundDifferential"];
 	NSString *differentialString = [NSString stringWithFormat:@"%@",differentialNumber];
 
 	cell.courseNameCell.text = courseString2;
@@ -202,7 +198,8 @@
 	cell.scoreCell.text= scoreString;
 	cell.differentialCell.text=differentialString;
 	 return cell;
- }
+
+}
 
 
 /*
@@ -268,9 +265,6 @@
 
 #pragma mark - UITableViewDelegate
 
-- (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
-    [super tableView:tableView didSelectRowAtIndexPath:indexPath];
-}
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
 {
@@ -280,11 +274,12 @@
 
 		NSIndexPath *indexPath = [self.tableView indexPathForSelectedRow];
 		EditRoundViewController *editVC = segue.destinationViewController;
-		PFObject *object = [self.objects objectAtIndex:indexPath.row];
+		PFObject *object = [_roundArray objectAtIndex:indexPath.row];
 		editVC.roundToEdit = object;
 	}
 
 	NSLog(@"Unknown segue: %@", [segue identifier]);
 }
+
 
 @end

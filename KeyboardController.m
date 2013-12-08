@@ -49,11 +49,9 @@
     switch ([(UISegmentedControl *)sender selectedSegmentIndex])
     {
         case 0:
-            NSLog(@"Previous");
             [self.delegate previousDidTouchDown];
             break;
         case 1:
-            NSLog(@"Next");
             [self.delegate nextDidTouchDown];
             break;
         default:
@@ -64,8 +62,6 @@
 - (void)doneDidClick:(id)sender
 {
     if (!self.delegate) return;
-
-    NSLog(@"Done");
     [self.delegate doneDidTouchDown];
 }
 

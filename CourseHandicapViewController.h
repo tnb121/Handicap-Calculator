@@ -12,6 +12,7 @@
 #import "HomeScreenViewController.h"
 #import "Handicap.h"
 #import "CourseCell.h"
+#import "CourseFromParse.h"
 
 @interface CourseHandicapViewController : UIViewController <UITextFieldDelegate,UIPickerViewDelegate,UIPickerViewDataSource,KeyboardControllerDelegate>
 
@@ -20,5 +21,7 @@
 @property (strong, nonatomic) IBOutlet UILabel *courseHandicapLabel;
 
 @property (strong,nonatomic) Handicap * hCapClass;
+
+
 
 @end

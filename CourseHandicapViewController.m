@@ -9,8 +9,10 @@
 #import "CourseHandicapViewController.h"
 #import "ParseData.h"
 
+
 @interface CourseHandicapViewController ()
 @property (strong, nonatomic) KeyboardController *enhancedKeyboard;
+
 
 @end
 
@@ -20,6 +22,7 @@
 @synthesize courseHandicapLabel=_courseHandicapLabel;
 @synthesize courseHandicapMyHandicapLabel=_courseHandicapMyHandicapLabel;
 @synthesize courseHandicapSlopeValue=_courseHandicapSlopeValue;
+
 
 
 @synthesize hCapClass=_hCapClass;
@@ -46,16 +49,15 @@ int slopeAverage;
 
 	[super viewWillAppear:animated];
 
-	_courseHandicapMyHandicapLabel.text = [self.hCapClass handicapCalculationString];
+	[self SetDataAfterParseFetch];
 	[self.courseHandicapSlopeValue becomeFirstResponder];
+
 
 	if([[[ParseData sharedParseData]roundCount]integerValue]==0)
 		courseSlope= 113;
 	else
 		courseSlope = [[[ParseData sharedParseData] slopeAverage]doubleValue];
 	slopeAverage = 0;
-
-
 }
 
 - (void)viewDidAppear:(BOOL)animated
@@ -77,7 +79,6 @@ int slopeAverage;
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-	_courseHandicapLabel.text= @"-";
 	self.enhancedKeyboard = [[KeyboardController alloc] init];
 	self.enhancedKeyboard.delegate=self;
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(SetDataAfterParseFetch) name:@"ParseCommunicationComplete" object:nil];
@@ -122,12 +123,12 @@ int slopeAverage;
 -(void)SharedCourseHandicapCalculation
 {
 	double myHandicap = [self.hCapClass handicapCalculation];
-	double courseHCap= myHandicap * courseSlope / 113;
+	int courseHCap= lround(myHandicap * courseSlope / 113);
 
 	if(courseHCap==0)
 		_courseHandicapLabel.text= @"-";
 	else
-		_courseHandicapLabel.text = [NSString stringWithFormat:@"%.1f",courseHCap];
+		_courseHandicapLabel.text = [NSString stringWithFormat:@"%.1d",courseHCap];
 }
 
 
@@ -136,21 +137,6 @@ int slopeAverage;
 [sender setInputAccessoryView:[self.enhancedKeyboard getToolbarWithPrevEnabled:NO NextEnabled:NO DoneEnabled:YES]];
 }
 
-
--(void)showSlopeAlertView
-{
-	UIAlertView *alertView = [[UIAlertView alloc] initWithTitle:@"Course Slope"
-														message:@"Enter course slope:"
-													   delegate:self
-											  cancelButtonTitle:@"Cancel"
-											  otherButtonTitles:@"OK", nil];
-	[alertView setAlertViewStyle:UIAlertViewStylePlainTextInput];
-	[[alertView textFieldAtIndex:0] setDelegate:self];
-	[[alertView textFieldAtIndex:0] setKeyboardType:UIKeyboardTypeNumberPad];
-	[[alertView textFieldAtIndex:0] becomeFirstResponder];
-	[alertView show];
-
-}
 
 - (void)alertView:(UIAlertView *)alertView clickedButtonAtIndex:(NSInteger)buttonIndex
 {

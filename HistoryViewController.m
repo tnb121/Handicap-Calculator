@@ -7,10 +7,12 @@
 //
 
 #import "HistoryViewController.h"
+#import "ParseData.h"
 
 @interface HistoryViewController ()
 
 @property (strong,nonatomic) Handicap * hCapClass;
+@property (strong,nonatomic) NSArray * historyArray;
 
 @end
 
@@ -48,40 +50,11 @@ double courseSlope;
 }
 
 
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom the table
-
-        // The className to query on
-        self.parseClassName = @"HandicapHistory";
-
-        // The key of the PFObject to display in the label of the default cell style
-        //self.textKey = @"text";
-
-        // The title for this table in the Navigation Controller.
-        //self.title = @"Todos";
-
-        // Whether the built-in pull-to-refresh is enabled
-        self.pullToRefreshEnabled = NO;
-
-        // Whether the built-in pagination is enabled
-        self.paginationEnabled = NO;
-
-        // The number of objects to show per page
-        self.objectsPerPage = 200;
-    }
-    return self;
-}
-
-
 #pragma mark - UIViewController
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-
 
     // Uncomment the following line to preserve selection between presentations.
     // self.clearsSelectionOnViewWillAppear = NO;
@@ -98,7 +71,9 @@ double courseSlope;
 
 - (void)viewWillAppear:(BOOL)animated {
     [super viewWillAppear:animated];
-}
+	_historyArray = [[ParseData sharedParseData]handicapHistoryFromParse];
+	[self.tableView reloadData];
+};
 
 - (void)viewDidAppear:(BOOL)animated {
     [super viewDidAppear:animated];
@@ -118,22 +93,6 @@ double courseSlope;
 }
 
 
-#pragma mark - PFQueryTableViewController
-
-- (void)objectsWillLoad
-{
-    [super objectsWillLoad];
-
-    // This method is called before a PFQuery is fired to get more objects
-}
-
-- (void)objectsDidLoad:(NSError *)error
-{
-    [super objectsDidLoad:error];
-
-    // This method is called every time objects are loaded from Parse via the PFQuery
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 	return 1;
@@ -142,45 +101,17 @@ double courseSlope;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	int fetchCount = [self.objects count];
+	int fetchCount = [_historyArray count];
 	return fetchCount;
 }
 
 
-// Override to customize what kind of query to perform on the class. The default is to query for
-// all objects ordered by createdAt descending.
-- (PFQuery *)queryForTable
-{
-	PFQuery *roundQuery = [PFQuery queryWithClassName:@"HandicapHistory"];
-	[roundQuery whereKey:@"historyUser" equalTo:[PFUser currentUser].username];
-	[roundQuery orderByDescending:@"historyRoundCount"];
-
-
-    // If no objects are loaded in memory, we look to the cache first to fill the table
-    // and then subsequently do a query against the network.
-    if ([self.objects count] == 0)
-	{
-        roundQuery.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    }
-
-	// If Pull To Refresh is enabled, query against the network by default.
-	//if (self.pullToRefreshEnabled)
-	//{
-	//	roundQuery.cachePolicy = kPFCachePolicyNetworkOnly;
-	//}
-
-	// If no objects are loaded in memory, we look to the cache first to fill the table
-	// and then subsequently do a query against the network.
-
-	return roundQuery;
-}
-
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
 	HandicapHistoryCell *cell = (HandicapHistoryCell * )[self.tableView dequeueReusableCellWithIdentifier:@"HistoryCell" forIndexPath:indexPath];
+	
+	PFObject * historyObject = [_historyArray objectAtIndex:indexPath.row];
 
 	NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 	[formatter setDateFormat:@"MM-dd-yyyy"];
@@ -189,15 +120,15 @@ double courseSlope;
 	//NSString *dateString = [dateFormatter stringFromDate:historyDate];
 
 	// get string values from Parse
-	NSNumber * roundCountNumber = [object objectForKey:@"historyRoundCount"];
+	NSNumber * roundCountNumber = [historyObject objectForKey:@"historyRoundCount"];
 	NSString * roundCountString = [NSString stringWithFormat:@"%@",roundCountNumber];
 
-	NSString* dateString = [formatter stringFromDate:[object objectForKey:@"historyDate"]];
+	NSString* dateString = [formatter stringFromDate:[historyObject objectForKey:@"historyDate"]];
 
-	NSNumber * scoringAverageNumber = [object objectForKey:@"historyScoringAverage"];
+	NSNumber * scoringAverageNumber = [historyObject objectForKey:@"historyScoringAverage"];
 	NSString * scoringAverageString = [NSString stringWithFormat:@"%.1f",[scoringAverageNumber doubleValue]];
 
-	NSNumber * handicapNumber = [object objectForKey:@"historyHandicap"];
+	NSNumber * handicapNumber = [historyObject objectForKey:@"historyHandicap"];
 	NSString * handicapString = [NSString stringWithFormat:@"%.1f",[handicapNumber doubleValue]];
 
 

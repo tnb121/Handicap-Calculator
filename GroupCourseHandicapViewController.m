@@ -22,15 +22,15 @@
 @property (strong, nonatomic) IBOutlet UITextField *groupCourseSlope;
 
 @property (strong, nonatomic) IBOutlet UILabel *myHandicapLabel;
-@property (strong, nonatomic) IBOutlet UILabel *myCourseHandicap;
-@property (strong, nonatomic) IBOutlet UILabel *player2CourseHandicap;
-@property (strong, nonatomic) IBOutlet UILabel *player3CourseHandicap;
-@property (strong, nonatomic) IBOutlet UILabel *player4CourseHandicap;
+@property (strong, nonatomic) IBOutlet UILabel *myCourseHandicapLabel;
+@property (strong, nonatomic) IBOutlet UILabel *player2CourseHandicapLabel;
+@property (strong, nonatomic) IBOutlet UILabel *player3CourseHandicapLabel;
+@property (strong, nonatomic) IBOutlet UILabel *player4CourseHandicapLabel;
 
-@property (strong, nonatomic) IBOutlet UILabel *strokesToGiveMy;
-@property (strong, nonatomic) IBOutlet UILabel *strokesToGive2;
-@property (strong, nonatomic) IBOutlet UILabel *strokesToGive3;
-@property (strong, nonatomic) IBOutlet UILabel *strokesToGive4;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGiveMeLabel;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGive2Label;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGive3Label;
+@property (strong, nonatomic) IBOutlet UILabel *strokesToGive4Label;
 
 @end
 
@@ -45,13 +45,24 @@
 @synthesize player4HandicapValue=_player4HandicapValue;
 
 @synthesize myHandicapLabel=_myHandicapLabel;
-@synthesize myCourseHandicap=_myCourseHandicap;
-@synthesize player2CourseHandicap=_player2CourseHandicap;
-@synthesize player3CourseHandicap=_player3CourseHandicap;
-@synthesize player4CourseHandicap=_player4CourseHandicap;
+@synthesize myCourseHandicapLabel=_myCourseHandicapLabel;
+@synthesize player2CourseHandicapLabel=_player2CourseHandicapLabel;
+@synthesize player3CourseHandicapLabel=_player3CourseHandicapLabel;
+@synthesize player4CourseHandicapLabel=_player4CourseHandicapLabel;
 
 bool scrollBOOL;
 
+double myHandicap;
+double player2Handicap;
+double player3Handicap;
+double player4Handicap;
+
+double myCourseHandicap;
+double player2CourseHandicap;
+double player3CourseHandicap;
+double player4CourseHandicap;
+
+int courseSlope;
 
 -(Handicap*)hCapClass
 {
@@ -61,27 +72,32 @@ bool scrollBOOL;
 
 - (IBAction)calculateGroupCourseHandicap:(id)sender
 {
-	int myRoundedCourseHandicap = lround([self.hCapClass handicapCalculation]);
-	int player2Handicap = lround([_player2HandicapValue.text doubleValue]);
-	int player3Handicap = lround([_player3HandicapValue.text doubleValue]);
-	int player4Handicap = lround([_player4HandicapValue.text doubleValue]);
-	int courseSlope =[_groupCourseSlope.text doubleValue];
+	myHandicap = [self.hCapClass handicapCalculation];
+	player2Handicap = [_player2HandicapValue.text doubleValue];
+	player3Handicap = [_player3HandicapValue.text doubleValue];
+	player4Handicap = [_player4HandicapValue.text doubleValue];
+	courseSlope =[_groupCourseSlope.text doubleValue];
 
-	_myCourseHandicap.text= [NSString stringWithFormat:@"%.1d",myRoundedCourseHandicap*courseSlope/113];
+	myCourseHandicap=lround(myHandicap*courseSlope/113);
+	player2CourseHandicap=lround(player2Handicap*courseSlope/113);
+	player3CourseHandicap=lround(player3Handicap*courseSlope/113);
+	player4CourseHandicap=lround(player4Handicap*courseSlope/113);
+
+	_myCourseHandicapLabel.text= [NSString stringWithFormat:@"%.0f",myCourseHandicap];
 	if(!_player2HandicapValue.text)
-		_player2CourseHandicap.text=@"-";
+		_player2CourseHandicapLabel.text=@"-";
 	else
-		_player2CourseHandicap.text =[NSString stringWithFormat:@"%.1d",player2Handicap * courseSlope / 113];
+		_player2CourseHandicapLabel.text =[NSString stringWithFormat:@"%ld",lround(player2Handicap * courseSlope / 113)];
 
 	if(!_player3HandicapValue.text)
-		_player3CourseHandicap.text=@"-";
+		_player3CourseHandicapLabel.text=@"-";
 	else
-		_player3CourseHandicap.text =[NSString stringWithFormat:@"%.1d",player3Handicap * courseSlope / 113];
+		_player3CourseHandicapLabel.text =[NSString stringWithFormat:@"%ld",lround(player3Handicap * courseSlope / 113)];
 
 	if(!_player4HandicapValue.text)
-		_player4CourseHandicap.text=@"-";
+		_player4CourseHandicapLabel.text=@"-";
 	else
-		_player4CourseHandicap.text =[NSString stringWithFormat:@"%.1d",player4Handicap * courseSlope / 113];
+		_player4CourseHandicapLabel.text =[NSString stringWithFormat:@"%ld",lround(player4Handicap * courseSlope / 113)];
 
 	[self strokesGivenCalculation];
 
@@ -253,61 +269,42 @@ else
 	if([self GroupCourseSlopeCheck] ==NO)
 		return;
 
-	NSNumber * player2Handicap = nil;
-	NSNumber * player3Handicap = nil;
-	NSNumber * player4Handicap = nil;
+	NSNumber * myCourseHandicapObject = [NSNumber numberWithInt:myCourseHandicap];
+	NSNumber * player2CourseHandicapObject = nil;
+	NSNumber * player3CourseHandicapObject = nil;
+	NSNumber * player4CourseHandicapObject = nil;
 
-	NSNumber * myRoundedCourseHandicap = [NSNumber numberWithInt:lround([self.hCapClass handicapCalculation])];
+	if(![_player2HandicapValue.text isEqualToString:@""]) player2CourseHandicapObject = [NSNumber numberWithInt:player2CourseHandicap];
 
-	if(![_player2HandicapValue.text isEqualToString:@""])
-		 {
-			 player2Handicap = [NSNumber numberWithInt:lround([_player2HandicapValue.text doubleValue])];
-		 }
-	if(![_player3HandicapValue.text  isEqualToString:@""])
-		 {
-			 player3Handicap = [NSNumber numberWithInt:lround([_player3HandicapValue.text doubleValue])];
-		 }
-	if(![_player4HandicapValue.text  isEqualToString:@""])
-		 {
-			 player4Handicap = [NSNumber numberWithInt:lround([_player4HandicapValue.text doubleValue])];
-		 }
+	if(![_player3HandicapValue.text  isEqualToString:@""])player3CourseHandicapObject = [NSNumber numberWithInt:player3CourseHandicap];
+
+	if(![_player4HandicapValue.text  isEqualToString:@""])player4CourseHandicapObject= [NSNumber numberWithInt:lround(player4CourseHandicap)];
+
 
 	NSMutableArray * strokesGivenArray = [NSMutableArray new];
-	[strokesGivenArray addObject:myRoundedCourseHandicap];
+	[strokesGivenArray addObject:myCourseHandicapObject];
 
-
-	if(player2Handicap != nil)
-		[strokesGivenArray addObject:player2Handicap];
-	if(player3Handicap!= nil)
-		[strokesGivenArray addObject:player3Handicap];
-	if(player4Handicap!= nil)
-		[strokesGivenArray addObject:player4Handicap];
+	if(player2CourseHandicapObject != nil)[strokesGivenArray addObject:player2CourseHandicapObject];
+	if(player3CourseHandicapObject != nil)[strokesGivenArray addObject:player3CourseHandicapObject];
+	if(player4CourseHandicapObject != nil)[strokesGivenArray addObject:player4CourseHandicapObject];
 
 	int minCourseHandicap = [[strokesGivenArray valueForKeyPath:@"@min.intValue"] intValue];
 
-	int strokesGivenMe = [myRoundedCourseHandicap integerValue]-minCourseHandicap;
-		if(strokesGivenMe > 0)
-			_strokesToGiveMy.text = [NSString stringWithFormat:@"%d",strokesGivenMe];
-		else
-			_strokesToGiveMy.text = @"-";
+	int strokesGivenMe = [myCourseHandicapObject integerValue]-minCourseHandicap;
+		if(strokesGivenMe > 0) _strokesToGiveMeLabel.text = [NSString stringWithFormat:@"%d",strokesGivenMe];
+		else _strokesToGiveMeLabel.text = @"-";
 
-	int strokesGivenPlayer2 = [player2Handicap integerValue]-minCourseHandicap;
-		if(strokesGivenPlayer2 > 0)
-			_strokesToGive2.text = [NSString stringWithFormat:@"%d",strokesGivenPlayer2];
-		else
-			_strokesToGive2.text = @"-";
+	int strokesGivenPlayer2 = [player2CourseHandicapObject integerValue]-minCourseHandicap;
+		if(strokesGivenPlayer2 > 0) _strokesToGive2Label.text = [NSString stringWithFormat:@"%d",strokesGivenPlayer2];
+		else _strokesToGive2Label.text = @"-";
 
-	int strokesGivenPlayer3 = [player3Handicap integerValue]-minCourseHandicap;
-		if(strokesGivenPlayer3 > 0)
-			_strokesToGive3.text = [NSString stringWithFormat:@"%d",strokesGivenPlayer3];
-		else
-			_strokesToGive3.text = @"-";
+	int strokesGivenPlayer3 = [player3CourseHandicapObject integerValue]-minCourseHandicap;
+		if(strokesGivenPlayer3 > 0) _strokesToGive3Label.text = [NSString stringWithFormat:@"%d",strokesGivenPlayer3];
+		else _strokesToGive3Label.text = @"-";
 
-	int strokesGivenPlayer4 = [player4Handicap integerValue]-minCourseHandicap;
-		if(strokesGivenPlayer4 > 0)
-			_strokesToGive4.text = [NSString stringWithFormat:@"%d",strokesGivenPlayer4];
-		else
-			_strokesToGive4.text = @"-";
+	int strokesGivenPlayer4 = [player4CourseHandicapObject integerValue]-minCourseHandicap;
+		if(strokesGivenPlayer4 > 0) _strokesToGive4Label.text = [NSString stringWithFormat:@"%d",strokesGivenPlayer4];
+		else _strokesToGive4Label.text = @"-";
 }
 
 - (IBAction)ShowSlopePicker:(id)sender
@@ -318,10 +315,8 @@ else
 
 	int slopeAverage;
 
-	if([[[ParseData sharedParseData]roundCount]integerValue]==0)
-		slopeAverage = 113;
-	else
-		slopeAverage = [[[ParseData sharedParseData]slopeAverage]integerValue];
+	if([[[ParseData sharedParseData]roundCount]integerValue]==0)slopeAverage = 113;
+	else slopeAverage = [[[ParseData sharedParseData]slopeAverage]integerValue];
 
 	[self.groupCourseSlope setInputView:slopePicker];
 	[slopePicker selectRow:(slopeAverage-55) inComponent:0 animated:NO];

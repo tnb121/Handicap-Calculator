@@ -37,6 +37,9 @@
 	// Do any additional setup after loading the view.
 	self.definitionItem.text = self.definitionItemText;
 	self.definitionDetail.text=self.definitionDetalText;
+
+	[self.definitionDetail setFont:[UIFont fontWithName:@"HelveticaNeue" size:16]];
+
 }
 -(void)viewWillAppear:(BOOL)animated
 {

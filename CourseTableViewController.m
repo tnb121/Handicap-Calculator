@@ -8,6 +8,8 @@
 
 #import "CourseTableViewController.h"
 #import <UIKit/UIKit.h>
+#import "ParseData.h"
+#import "CourseFromParse.h"
 
 #import "CourseCell.h"
 
@@ -33,6 +35,8 @@ double courseSlope;
 
 
 
+
+
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
     self = [super initWithNibName:nibNameOrNil bundle:nibBundleOrNil];
@@ -48,34 +52,6 @@ double courseSlope;
     [super didReceiveMemoryWarning];
 
     // Release any cached data, images, etc that aren't in use.
-}
-
-
-- (id)initWithStyle:(UITableViewStyle)style
-{
-    self = [super initWithStyle:style];
-    if (self) {
-        // Custom the table
-
-        // The className to query on
-        self.parseClassName = @"Rounds";
-
-        // The key of the PFObject to display in the label of the default cell style
-        //self.textKey = @"text";
-
-        // The title for this table in the Navigation Controller.
-        //self.title = @"Todos";
-
-        // Whether the built-in pull-to-refresh is enabled
-        self.pullToRefreshEnabled = NO;
-
-        // Whether the built-in pagination is enabled
-        self.paginationEnabled = NO;
-
-        // The number of objects to show per page
-        self.objectsPerPage = 200;
-    }
-    return self;
 }
 
 
@@ -123,20 +99,6 @@ double courseSlope;
 
 #pragma mark - PFQueryTableViewController
 
-- (void)objectsWillLoad
-{
-    [super objectsWillLoad];
-
-    // This method is called before a PFQuery is fired to get more objects
-}
-
-- (void)objectsDidLoad:(NSError *)error
-{
-    [super objectsDidLoad:error];
-
-    // This method is called every time objects are loaded from Parse via the PFQuery
-}
-
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView
 {
 	return 1;
@@ -145,77 +107,40 @@ double courseSlope;
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section
 {
-	int fetchCount = [self.objects count];
+	int fetchCount = [[ParseData sharedParseData]uniqueCourseArray].count;
 	return fetchCount;
 }
 
-
-// Override to customize what kind of query to perform on the class. The default is to query for
-// all objects ordered by createdAt descending.
-- (PFQuery *)queryForTable
-{
-	PFQuery *roundQuery = [PFQuery queryWithClassName:@"Rounds"];
-	[roundQuery whereKey:@"roundUser" equalTo:[PFUser currentUser].username];
-
-
-    // If no objects are loaded in memory, we look to the cache first to fill the table
-    // and then subsequently do a query against the network.
-    if ([self.objects count] == 0)
-	{
-        roundQuery.cachePolicy = kPFCachePolicyCacheThenNetwork;
-    }
-
-	// If Pull To Refresh is enabled, query against the network by default.
-	//if (self.pullToRefreshEnabled)
-	//{
-	//	roundQuery.cachePolicy = kPFCachePolicyNetworkOnly;
-	//}
-
-	// If no objects are loaded in memory, we look to the cache first to fill the table
-	// and then subsequently do a query against the network.
-
-	return roundQuery;
-}
-
-
-
-- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath object:(PFObject *)object
+- (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath
 {
 
 	CourseCell *cell = (CourseCell * )[self.tableView dequeueReusableCellWithIdentifier:@"CourseCell" forIndexPath:indexPath];
 
 	// get string values from Parse
-	NSString * teeString =[object objectForKey:@"roundTee"];
-	NSString* courseString = [object objectForKey:@"roundCourse"];
-	NSString * courseString2 = [[courseString stringByAppendingString:@" - "]stringByAppendingString:teeString];
+	NSArray * courseArray = [[ParseData sharedParseData]uniqueCourseArray];
 
-	NSNumber * SlopeNumber = [object objectForKey:@"roundSlope"];
-	NSString * slopeString = [NSString stringWithFormat:@"%@",SlopeNumber];
+	CourseFromParse * courseObject = [courseArray objectAtIndex:indexPath.row];
 
-	NSNumber * ratingNumber = [object objectForKey:@"roundRating"];
-	NSString * ratingString = [NSString stringWithFormat:@"%@",ratingNumber];
+	NSString * courseName = courseObject.name;
+	NSString * teeName = courseObject.tee;
+	NSString * courseString2 = [[courseName stringByAppendingString:@" - "]stringByAppendingString:teeName];
+	NSNumber *rating = courseObject.rating;
+	NSNumber * slope = courseObject.slope;
 
-	double handicap = [self.hCapClass handicapCalculation];
-	double roundSlope = [[object objectForKey:@"roundSlope"]doubleValue];
-
-
-	//double courseHCap = [self.hCapClass handicapCalculation] * [[object objectForKey:@"roundSlope"]integerValue]/113;
-
-	double courseHCap = handicap * roundSlope / 113;
-
+	int courseHCap = lround([self.hCapClass handicapCalculation] * [slope doubleValue] / 113);
 
 	if (courseHCap < 0)
 
-		cell.courseHCapLabel.text = [@"+" stringByAppendingString:[NSString stringWithFormat:@"%.1f",-(courseHCap)]];
+		cell.courseHCapLabel.text = [@"+" stringByAppendingString:[NSString stringWithFormat:@"%.1d",-(courseHCap)]];
 	else
-			cell.courseHCapLabel.text =[NSString stringWithFormat:@"%.1f",courseHCap];
-
+			cell.courseHCapLabel.text =[NSString stringWithFormat:@"%.1d",courseHCap];
 
 	cell.courseNameLabel.text = courseString2;
-	cell.CourseSlopeLabel.text = slopeString;
-	cell.courseRatingLabel.text = ratingString;
+	cell.CourseSlopeLabel.text = [NSString stringWithFormat:@"%d",[slope integerValue]];
+	cell.courseRatingLabel.text = [NSString stringWithFormat:@"%.1f",[rating doubleValue]];
 
 	return cell;
+
 }
 
 

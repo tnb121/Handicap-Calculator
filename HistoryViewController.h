@@ -10,6 +10,6 @@
 #import "Handicap.h"
 #import "HandicapHistoryCell.h"
 
-@interface HistoryViewController : PFQueryTableViewController
+@interface HistoryViewController : UITableViewController <UITableViewDataSource,UITableViewDelegate>
 
 @end
